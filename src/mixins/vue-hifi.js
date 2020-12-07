@@ -6,13 +6,13 @@ export default {
       _howlConnection: null
     }
   },
-/*
+
   computed: {
     isPlaying: function() {
-
+      return this.$data._howlConnection ? this.$data._howlConnection.isPlaying : false
     }
   },
-*/
+
   props: {
     isMobileDevice: {
       type: Boolean,
@@ -32,11 +32,6 @@ export default {
     currentMetadata: {
       type: Object,
       default: null
-    },
-
-    isPlaying: {
-      type: Boolean,
-      default: false
     },
 
     isLoading: {
@@ -106,6 +101,8 @@ export default {
     play (/* urlsOrPromise, options = {} */) {
       if (!this.$data._howlConnection) {
         this.$data._howlConnection = new HowlerConnection()
+      } else if (this.isPlaying) {
+        this.pause()
       }
       this.$data._howlConnection.play()
     },

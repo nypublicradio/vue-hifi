@@ -65,4 +65,19 @@ describe('Vue Hifi', () => {
         wrapper.vm.togglePause()
         expect(wrapper.vm.$data._howlConnection).not.toBeNull()
     })
+
+    test('it pauses previously playing audio', () => {
+        const localVue = createLocalVue()
+        const testComponentType = localVue.component('test-component', {
+            mixins: [vueHifi],
+            render() {}
+        })
+        const wrapper = mount(testComponentType, {})
+        const spy = jest.spyOn(wrapper.vm, 'pause')
+
+        wrapper.vm.play()
+        wrapper.vm.$data._howlConnection.$set(wrapper.vm.$data._howlConnection, 'isPlaying', true)
+        wrapper.vm.play()
+        expect(spy).toHaveBeenCalledTimes(1)
+    })
 })
