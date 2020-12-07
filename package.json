@@ -1,0 +1,59 @@
+{
+  "name": "vue-hifi",
+  "version": "0.0.1",
+  "description": "The easy way to play audio in your Vue app.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nypublicradio/vue-hifi.git"
+  },
+  "keywords": [
+    "vue-addon",
+    "vue-hifi",
+    "audio",
+    "hls",
+    "html5",
+    "sound",
+    "mp3",
+    "api",
+    "mp3",
+    "web"
+  ],
+  "author": "Brad Kammin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nypublicradio/vue-hifi/issues"
+  },
+  "homepage": "https://github.com/nypublicradio/vue-hifi#readme",
+  "dependencies": {
+    "howler": "^2.2.1",
+    "vue": "^2.6.12"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.9",
+    "@babel/plugin-transform-runtime": "^7.12.1",
+    "@jest/environment": "^26.6.2",
+    "@vue/cli-plugin-babel": "^4.5.9",
+    "@vue/test-utils": "^1.1.1",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^26.6.3",
+    "babel-preset-vue": "^2.0.2",
+    "jest": "^26.6.3",
+    "vue-jest": "^3.0.7",
+    "vue-template-compiler": "^2.6.12"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "vue"
+    ],
+    "transform": {
+      ".*\\.(vue)$": "vue-jest",
+      "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
+    }
+  }
+}
