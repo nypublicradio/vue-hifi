@@ -14,9 +14,6 @@ describe('Vue Hifi', () => {
         expect(wrapper.is(testComponentType)).toBe(true)
         
         wrapper.vm.load()
-        wrapper.vm.pause()
-        wrapper.vm.stop()
-        wrapper.vm.togglePause()
         wrapper.vm.toggleMute()
         wrapper.vm.fastForward()
         wrapper.vm.rewind()
@@ -30,6 +27,42 @@ describe('Vue Hifi', () => {
         })
         const wrapper = mount(testComponentType, {})
         wrapper.vm.play()
+        expect(wrapper.vm.$data._howlConnection).not.toBeNull()
+    })
+
+    test('it pauses', () => {
+        const localVue = createLocalVue()
+        const testComponentType = localVue.component('test-component', {
+            mixins: [vueHifi],
+            render() {}
+        })
+        const wrapper = mount(testComponentType, {})
+        wrapper.vm.play()
+        wrapper.vm.pause()
+        expect(wrapper.vm.$data._howlConnection).not.toBeNull()
+    })
+
+    test('it stops', () => {
+        const localVue = createLocalVue()
+        const testComponentType = localVue.component('test-component', {
+            mixins: [vueHifi],
+            render() {}
+        })
+        const wrapper = mount(testComponentType, {})
+        wrapper.vm.play()
+        wrapper.vm.stop()
+        expect(wrapper.vm.$data._howlConnection).not.toBeNull()
+    })
+
+    test('it toggle pauses', () => {
+        const localVue = createLocalVue()
+        const testComponentType = localVue.component('test-component', {
+            mixins: [vueHifi],
+            render() {}
+        })
+        const wrapper = mount(testComponentType, {})
+        wrapper.vm.play()
+        wrapper.vm.togglePause()
         expect(wrapper.vm.$data._howlConnection).not.toBeNull()
     })
 })

@@ -51,6 +51,7 @@ describe('base-connection', () => {
     const wrapper = mount(BaseConnection, {
       render () {}
     })
+    wrapper.vm.play = function () {}
     wrapper.vm.fastForward()
     wrapper.vm.rewind()
     wrapper.vm.togglePause()
