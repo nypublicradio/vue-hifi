@@ -15,21 +15,7 @@ describe('base-connection', () => {
       render () {}
     })
     expect(wrapper.is(BaseConnection)).toBe(true)
-    expect(wrapper.vm.canPlay()).toBe(true)
-    expect(wrapper.vm.canUseConnection()).toBe(true)
-    //expect(wrapper.vm.canPlayMimeType()).toBe(true)
     expect(wrapper.vm._setVolume).toThrow('[vue-hifi] #_setVolume interface not implemented')
-  })
-
-  test('canPlayMimeType', () => {
-    const whiteListWrapper = mount(BaseConnection, {
-      render () {},
-      props: {
-        acceptMimeTypes: [ 'application/vnd.apple.mpegurl' ]
-      }
-    })
-    expect(whiteListWrapper.vm.acceptMimeTypes).toBeFalsy()
-    expect(whiteListWrapper.vm.canPlayMimeType('application/vnd.apple.mpegurl')).toBe(true)
   })
 
   test('public interface method stubs throw errors', () => {
@@ -84,5 +70,63 @@ describe('base-connection', () => {
     expect(wrapper.vm.duration).toBe(0)
     expect(wrapper.vm.percentLoaded).toBe(0)
     expect(wrapper.vm.position).toBe(0)
+  })
+
+  test('static methods exist', () => {
+    expect(BaseConnection._setup).toBeDefined()
+    expect(BaseConnection.canPlayMimeType).toBeDefined()
+    expect(BaseConnection.canPlay).toBeDefined()
+    expect(BaseConnection.canUseConnection).toBeDefined()
+  })
+
+  test('canPlayMimeType without black/white list', () => {
+    expect(BaseConnection.canPlayMimeType('application/vnd.apple.mpegurl')).toBe(true)
+  })
+
+  test('canPlayMimeType with whitelist', () => {
+    BaseConnection.acceptMimeTypes = [ 'application/vnd.apple.mpegurl', '2', '3' ]
+    expect(BaseConnection.canPlayMimeType('application/vnd.apple.mpegurl')).toBe(true)
+    expect(BaseConnection.canPlayMimeType('2')).toBe(true)
+    expect(BaseConnection.canPlayMimeType('3')).toBe(true)
+    expect(BaseConnection.canPlayMimeType('unsupported/some.other.mime.type')).toBe(false)
+    BaseConnection.acceptMimeTypes = undefined
+  })
+
+  test('canPlayMimeType with blacklist', () => {
+    BaseConnection.rejectMimeTypes = [ 'application/vnd.apple.mpegurl', '2', '3' ]
+    expect(BaseConnection.canPlayMimeType('application/vnd.apple.mpegurl')).toBe(false)
+    expect(BaseConnection.canPlayMimeType('2')).toBe(false)
+    expect(BaseConnection.canPlayMimeType('3')).toBe(false)
+    expect(BaseConnection.canPlayMimeType('supported/some.other.mime.type')).toBe(true)
+    BaseConnection.rejectMimeTypes = undefined
+  })
+
+  test('canUseConnection', () => {
+    expect(BaseConnection.canUseConnection()).toBe(true)
+  })
+
+  test('canPlay catches unusable connection', () => {
+    const canUseConnection = BaseConnection.canUseConnection
+    BaseConnection.canUseConnection = function () {
+      return false
+    }
+    expect(BaseConnection.canPlay()).toBe(false)
+    BaseConnection.canUseConnection = canUseConnection
+  })
+
+  test('canPlay with url.mimeType', () => {
+    expect(BaseConnection.canPlay({ mimeType: 'application/vnd.apple.mpegurl' })).toBe(true)
+  })
+
+  test('canPlay throws an error for invalid url', () => {
+    expect(BaseConnection.canPlay).toThrow('[vue-hifi] #URL must be a string or object with a mimeType property')
+  })
+
+  test('canPlay with string url', () => {
+    expect(BaseConnection.canPlay('https://hls-live.wnyc.org/wnycfm32/playlist.m3u8')).toBe(true)
+  })
+
+  test('canPlay with string url with unsupported mime type', () => {
+    expect(BaseConnection.canPlay('https://hls-live.wnyc.org/wnycfm32/playlist.xyz')).toBe(true)
   })
 })
