@@ -1,15 +1,16 @@
 import HowlerConnection from '../components/howler-connection'
 
 export default {
+
   data () {
     return {
-      _howlConnection: null
+      _sound: null
     }
   },
 
   computed: {
     isPlaying: function() {
-      return this.$data._howlConnection ? this.$data._howlConnection.isPlaying : false
+      return this.$data._sound ? this.$data._sound.isPlaying : false
     }
   },
 
@@ -94,32 +95,67 @@ export default {
 
   methods: {
 
-    load () {
+    /**
+     * Iterate the given array of URLs until a playable URL is found
+     */
+    _load (urls /* , options = {} */ ) {
+      // sharedAudioAccessxs
 
+      if (!(Array.isArray(urls) && urls.length > 0)) {
+        return false // error
+      }
+
+      for (var url in urls) {
+        //if (HowlerConnection.canPlay(url)) {
+          return new HowlerConnection({
+            propsData: {
+              urls: [ urls[url] ]
+            }
+          })
+        //}
+      }
     },
 
-    play (/* urlsOrPromise, options = {} */) {
-      if (!this.$data._howlConnection) {
-        this.$data._howlConnection = new HowlerConnection()
-      } else if (this.isPlaying) {
+    /**
+     * Given an array of URLs, return a sound and play it
+     *
+     * @method play
+     * @async
+     * @params urls
+     * @options
+     * @return
+     */
+
+    play (urls, options = {}) {
+      if (this.isPlaying) {
+        // trigger current-sound-iterrupted
         this.pause()
       }
-      this.$data._howlConnection.play()
+
+      //this.$set(this, 'isLoading', true)
+
+      // setup event hooks
+      let sound = this._load(urls, options)
+
+      if (sound) {
+        this.$data._sound = sound
+        this.$data._sound.play(options)
+      }
     },
 
     pause () {
       // make sure sound is playing/exists
-      this.$data._howlConnection.pause()
+      this.$data._sound.pause()
     },
 
     stop () {
       // make sure sound is playing/exists
-      this.$data._howlConnection.stop()
+      this.$data._sound.stop()
     },
 
     togglePause () {
       // make sure sound is playing/exists
-      this.$data._howlConnection.togglePause()
+      this.$data._sound.togglePause()
     },
 
     toggleMute () {

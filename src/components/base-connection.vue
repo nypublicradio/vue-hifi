@@ -2,7 +2,7 @@
 import Vue from 'vue'
 import { getMimeType } from '../utils/mime-types'
 
-let BaseConnection = Vue.extend({
+let BaseConnectionOriginal = Vue.extend({
 
   props: {
     debugName: { // computed
@@ -73,6 +73,11 @@ let BaseConnection = Vue.extend({
     position: { // computed
       type: Number,
       default: 0
+    },
+
+    urls: {
+      type: Array,
+      default: undefined
     }
   },
 
@@ -155,48 +160,50 @@ let BaseConnection = Vue.extend({
   }
 })
 
-BaseConnection._setup = function (/* config */) {
+class BaseConnection extends BaseConnectionOriginal {
+  static _setup = function (/* config */) {
 
-}
-
-BaseConnection.canPlay = function (url) {
-  let usablePlatform = BaseConnection.canUseConnection(url)
-
-  if (!usablePlatform) {
-    return false
   }
 
-  if (typeof url === 'string') {
-    let mimeType = getMimeType(url)
+  static canPlayMimeType (mimeType) {
+    const mimeTypeWhiteList = this.acceptMimeTypes
+    const mimeTypeBlackList = this.rejectMimeTypes
 
-    if (!mimeType) {
-      console.warn(`Could not determine mime type for ${url}`)
-      console.warn(`Attempting to play urls with an unknown mime type can be bad for performance.`)
-      return true
+    if (mimeTypeWhiteList) {
+      return mimeTypeWhiteList.includes(mimeType)
+    } else if (mimeTypeBlackList) {
+      return !mimeTypeBlackList.includes(mimeType)
     } else {
-      return BaseConnection.canPlayMimeType(mimeType)
+      return true // assume true
     }
-  } else if (url && url.mimeType) {
-    return BaseConnection.canPlayMimeType(url.mimeType)
-  } else {
-    throw new Error('[vue-hifi] #URL must be a string or object with a mimeType property')
   }
-}
 
-BaseConnection.canUseConnection = function () {
-  return true
-},
+  static canPlay (url) {
+    let usablePlatform = BaseConnection.canUseConnection(url)
 
-BaseConnection.canPlayMimeType = function (mimeType) {
-  const mimeTypeWhiteList = this.acceptMimeTypes
-  const mimeTypeBlackList = this.rejectMimeTypes
+    if (!usablePlatform) {
+      return false
+    }
 
-  if (mimeTypeWhiteList) {
-    return mimeTypeWhiteList.includes(mimeType)
-  } else if (mimeTypeBlackList) {
-    return !mimeTypeBlackList.includes(mimeType)
-  } else {
-    return true // assume true
+    if (typeof url === 'string') {
+      let mimeType = getMimeType(url)
+
+      if (!mimeType) {
+        console.warn(`Could not determine mime type for ${url}`)
+        console.warn(`Attempting to play urls with an unknown mime type can be bad for performance.`)
+        return true
+      } else {
+        return BaseConnection.canPlayMimeType(mimeType)
+      }
+    } else if (url && url.mimeType) {
+      return BaseConnection.canPlayMimeType(url.mimeType)
+    } else {
+      throw new Error('[vue-hifi] #URL must be a string or object with a mimeType property')
+    }
+  }
+
+  static canUseConnection () {
+    return true
   }
 }
 
