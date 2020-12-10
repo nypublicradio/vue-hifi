@@ -1,5 +1,26 @@
 import HowlerConnection from '../components/howler-connection'
 
+export const EVENT_MAP = [
+  {event: 'audio-played',               handler: '_relayPlayedEvent'},
+  {event: 'audio-paused',               handler: '_relayPausedEvent'},
+  {event: 'audio-ended',                handler: '_relayEndedEvent'},
+  {event: 'audio-duration-changed',     handler: '_relayDurationChangedEvent'},
+  {event: 'audio-position-changed',     handler: '_relayPositionChangedEvent'},
+  {event: 'audio-loaded',               handler: '_relayLoadedEvent'},
+  {event: 'audio-loading',              handler: '_relayLoadingEvent'},
+  {event: 'audio-position-will-change', handler: '_relayPositionWillChangeEvent'},
+  {event: 'audio-will-rewind',          handler: '_relayWillRewindEvent'},
+  {event: 'audio-will-fast-forward',    handler: '_relayWillFastForwardEvent'},
+  {event: 'audio-metadata-changed',     handler: '_relayMetadataChangedEvent'}
+]
+
+export const SERVICE_EVENT_MAP = [
+  {event: 'current-sound-changed' },
+  {event: 'current-sound-interrupted' },
+  {event: 'new-load-request' },
+  {event: 'pre-load' }
+]
+
 export default {
 
   data () {
@@ -134,10 +155,10 @@ export default {
 
       //this.$set(this, 'isLoading', true)
 
-      // setup event hooks
       let sound = this._load(urls, options)
 
       if (sound) {
+        this._registerEvents(sound)
         this.$data._sound = sound
         this.$data._sound.play(options)
       }
@@ -168,6 +189,98 @@ export default {
 
     rewind () {
 
-    }
+    },
+
+    /**
+    * Register events on a current sound. Audio events triggered on that sound
+    * will be relayed and triggered on this service
+    *
+    * @method _registerEvents
+    * @param {Object} sound
+    * @private
+    */
+
+    _registerEvents(sound) {
+      let service = this;
+      EVENT_MAP.forEach(item => {
+        sound.$on(item.event, service[item.handler]);
+      });
+
+      // Internal event for cleanup
+      sound.$on('_will_destroy', () => {
+        this._unregisterEvents(sound);
+      })
+    },
+
+    /**
+    * Register events on a current sound. Audio events triggered on that sound
+    * will be relayed and triggered on this service
+    *
+    * @method _unregisterEvents
+    * @param {Object} sound
+    * @private
+    */
+
+    _unregisterEvents(sound) {
+      if (!sound) {
+        return;
+      }
+
+      let service = this;
+      EVENT_MAP.forEach(item => {
+        sound.$off(item.event, service[item.handler]);
+      });
+      sound.$off('_will_destroy')
+    },
+
+    /**
+    * Relays an audio event on the sound to an event on the service
+    *
+    * @method relayEvent
+    * @param {String, Object} eventName, sound
+    * @private
+    */
+
+    _relayEvent(eventName, sound, info = {}) {
+      this.$emit(eventName, sound, info);
+    },
+
+    /**
+      Named functions so Vue can successfully register/unregister them
+    */
+
+    _relayPlayedEvent(sound) {
+      this._relayEvent('audio-played', sound);
+    },
+    _relayPausedEvent(sound) {
+      this._relayEvent('audio-paused', sound);
+    },
+    _relayEndedEvent(sound) {
+      this._relayEvent('audio-ended', sound);
+    },
+    _relayDurationChangedEvent(sound) {
+      this._relayEvent('audio-duration-changed', sound);
+    },
+    _relayPositionChangedEvent(sound) {
+      this._relayEvent('audio-position-changed', sound);
+    },
+    _relayLoadedEvent(sound) {
+      this._relayEvent('audio-loaded', sound);
+    },
+    _relayLoadingEvent(sound) {
+      this._relayEvent('audio-loading', sound);
+    },
+    _relayPositionWillChangeEvent(sound,  info = {}) {
+      this._relayEvent('audio-position-will-change', sound, info);
+    },
+    _relayWillRewindEvent(sound,  info) {
+      this._relayEvent('audio-will-rewind', sound, info);
+    },
+    _relayWillFastForwardEvent(sound, info) {
+      this._relayEvent('audio-will-fast-forward', sound, info);
+    },
+    _relayMetadataChangedEvent(sound, info) {
+      this._relayEvent('audio-metadata-changed', sound, info);
+    },
   }
 }

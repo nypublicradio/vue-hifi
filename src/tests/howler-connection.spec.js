@@ -11,7 +11,7 @@ describe('howler-connection', () => {
 
   test('it is set up', () => {
     const wrapper = mount(HowlerConnection, {})
-    expect(wrapper.vm.setup).not.toThrow('[vue-hifi] #setup interface not implemented')
+    expect(wrapper.vm._setup).not.toThrow('[vue-hifi] #_setup interface not implemented')
   })
 
   test('it plays', () => {
@@ -102,5 +102,41 @@ describe('howler-connection', () => {
 
   test('inherited static methods execute', () => {
   //  expect(HowlerConnection.canPlay('')).toBe(true)
+  })
+
+  test('howl event handlers emit events', () => {
+    const wrapper = mount(HowlerConnection, {
+
+    })
+    expect(wrapper.vm._onload).toBeDefined()
+    expect(wrapper.vm._onplay).toBeDefined()
+    expect(wrapper.vm._onpause).toBeDefined()
+    expect(wrapper.vm._onend).toBeDefined()
+    expect(wrapper.vm._onstop).toBeDefined()
+    expect(wrapper.vm._onloaderror).toBeDefined()
+    expect(wrapper.vm._onseek).toBeDefined()
+
+    wrapper.vm._onload()
+    wrapper.vm._onplay()
+    wrapper.vm._onpause()
+    wrapper.vm._onend()
+    wrapper.vm._onstop()
+    wrapper.vm._onloaderror()
+    wrapper.vm._onseek()
+    let emitted = wrapper.emitted()
+    expect(emitted['audio-loaded']).toBeDefined()
+    expect(emitted['audio-loaded'].length).toBe(1)
+    expect(emitted['audio-ready']).toBeDefined()
+    expect(emitted['audio-ready'].length).toBe(1)
+    expect(emitted['audio-played']).toBeDefined()
+    expect(emitted['audio-played'].length).toBe(1)
+    expect(emitted['audio-paused']).toBeDefined()
+    expect(emitted['audio-paused'].length).toBe(2) // _onpause, _onstop
+    expect(emitted['audio-ended']).toBeDefined()
+    expect(emitted['audio-ended'].length).toBe(1)
+    expect(emitted['audio-load-error']).toBeDefined()
+    expect(emitted['audio-load-error'].length).toBe(1)
+    expect(emitted['audio-position-changed']).toBeDefined()
+    expect(emitted['audio-position-changed'].length).toBe(1)
   })
 })

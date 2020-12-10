@@ -12,7 +12,36 @@ let HowlerConnection = BaseConnection.extend({
 
   methods: {
 
-    setup () {
+    _onload () {
+      this.$emit('audio-loaded', this)
+      this.$emit('audio-ready', this)
+    },
+
+    _onplay () {
+      this.$emit('audio-played', this)
+    },
+
+    _onpause () {
+      this.$emit('audio-paused', this)
+    },
+
+    _onend: function() {
+      this.$emit('audio-ended', this)
+    },
+
+    _onstop: function() {
+      this.$emit('audio-paused', this)
+    },
+
+    _onloaderror: function( id, error ) {
+      this.$emit('audio-load-error', error, id)
+    },
+
+    _onseek: function() {
+      this.$emit('audio-position-changed', this._currentPosition())
+    },
+
+    _setup () {
       let sound = this
       this.$data._howl = new Howl({
         src: sound.urls,
@@ -21,36 +50,17 @@ let HowlerConnection = BaseConnection.extend({
         html5:    true, // force native audio
         volume:   1,
         format: ['aac'], // needed for missing file extension
-        onload: function() {
-          sound.$set(sound, 'isPlaying', false)
-        },
-        onplay: function() {
-          sound.$set(sound, 'isPlaying', true)
-        },
-        onpause: function() {
-          sound.$set(sound, 'isPlaying', false)
-        },
-        onend: function() {
-          sound.$set(sound, 'isPlaying', false)
-        },
-        onstop: function() {
-          sound.$set(sound, 'isPlaying', false)
-        },
-        onloaderror: function(id, error) {
-          console.log(error)
-          console.log(id)
-          sound.$set(sound, 'isPlaying', false)
-        },
-        onseek: function() {
-
-        }
+        onload: this._onload,
+        onplay: this._onplay,
+        onpause: this._onpause,
+        onend: this._onend,
+        onstop: this._onstop,
+        onloaderror: this._onloaderror,
+        onseek: this._onseek
       })
     },
 
     play (/* { position } = {} */ ) {
-      if (!this.$data._howl) {
-        this.setup()
-      }
       this.$data._howl.play()
     },
 

@@ -4,25 +4,19 @@ import BaseConnection from '../components/base-connection'
 
 describe('base-connection', () => {
   test('it exists', () => {
-    const wrapper = mount(BaseConnection, {
-      render () {}
-    })
+    const wrapper = mount(BaseConnection, {})
     expect(wrapper.is(BaseConnection)).toBe(true)
   })
 
   test('mixin methods work', () => {
-    const wrapper = mount(BaseConnection, {
-      render () {}
-    })
+    const wrapper = mount(BaseConnection, {})
     expect(wrapper.is(BaseConnection)).toBe(true)
     expect(wrapper.vm._setVolume).toThrow('[vue-hifi] #_setVolume interface not implemented')
   })
 
   test('public interface method stubs throw errors', () => {
-    const wrapper = mount(BaseConnection, {
-      render () {}
-    })
-    expect(wrapper.vm.setup).toThrow('[vue-hifi] #setup interface not implemented')
+    const wrapper = mount(BaseConnection, {})
+    expect(wrapper.vm._setup).toThrow('[vue-hifi] #_setup interface not implemented')
     expect(wrapper.vm._setVolume).toThrow('[vue-hifi] #_setVolume interface not implemented')
     expect(wrapper.vm._audioDuration).toThrow('[vue-hifi] #_audioDuration interface not implemented')
     expect(wrapper.vm._currentPosition).toThrow('[vue-hifi] #_currentPosition interface not implemented')
@@ -34,9 +28,7 @@ describe('base-connection', () => {
   })
 
   test('non-inherited public interface methods work', () => {
-    const wrapper = mount(BaseConnection, {
-      render () {}
-    })
+    const wrapper = mount(BaseConnection, {})
     wrapper.vm.play = function () {}
     wrapper.vm.fastForward()
     wrapper.vm.rewind()
@@ -44,23 +36,22 @@ describe('base-connection', () => {
   })
 
   test('internal methods work', () => {
-    const wrapper = mount(BaseConnection, {
-      render () {}
-    })
-    wrapper.vm.init()
+    const wrapper = mount(BaseConnection, {})
     wrapper.vm._detectTimeouts()
     wrapper.vm.willDestroy()
   })
 
-  test('property defaults', () => {
+  test('it is initialized', () => {
     const wrapper = mount(BaseConnection, {
-      render () {}
+      methods: {
+        _setup () {}
+      }
     })
     expect(wrapper.vm.debugName).toBe('base-connection')
     expect(wrapper.vm.pollInterval).toBe(1000)
     expect(wrapper.vm.timeout).toBe(30000)
     expect(wrapper.vm.hasPlayed).toBe(false)
-    expect(wrapper.vm.isLoading).toBe(false)
+    expect(wrapper.vm.isLoading).toBe(true)
     expect(wrapper.vm.isPlaying).toBe(false)
     expect(wrapper.vm.isErrored).toBe(false)
     expect(wrapper.vm.error).toBe(null)

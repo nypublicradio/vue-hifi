@@ -4,6 +4,10 @@ import { getMimeType } from '../utils/mime-types'
 
 let BaseConnectionOriginal = Vue.extend({
 
+  created () {
+    this.init()
+  },
+
   props: {
     debugName: { // computed
       type: String,
@@ -86,7 +90,53 @@ let BaseConnectionOriginal = Vue.extend({
     // Initializer
 
     init () {
+      this.$set(this, 'isLoading', true);
 
+      this.$on('audio-played', () => {
+        this.$set(this, 'hasPlayed', true);
+        this.$set(this, 'isLoading', false);
+        this.$set(this, 'isPlaying', true);
+        this.$set(this, 'error', null);
+        //this.notifyPropertyChange('isLoading');
+      });
+
+      this.$on('audio-paused', () => {
+        this.$set(this, 'isPlaying', false);
+      });
+
+      this.$on('audio-ended', () => {
+        this.$set(this, 'isPlaying', false);
+      });
+
+      this.$on('audio-ready', () => {
+        this.$set(this, 'duration', this._audioDuration());
+      });
+
+      this.$on('audio-load-error', (e) => {
+        if (this.hasPlayed) {
+          this.$set(this, 'isLoading', false);
+          this.$set(this, 'isPlaying', false);
+        }
+        this.$set(this, 'error', e);
+      });
+
+      this.$on('audio-loaded', () => {
+        this.$set(this, 'isLoading', false);
+      });
+
+      this.$on('audio-loading', (info) => {
+        if (info && info.percentLoaded) {
+          this.$set(this, 'percentLoaded', info.percentLoaded);
+        }
+      });
+
+      this._detectTimeouts();
+
+      try {
+        this._setup();
+      } catch(e) {
+        this.$emit('audio-load-error', `Error in _setup ${e.message}`);
+      }
     },
 
     // Destruction
@@ -121,8 +171,8 @@ let BaseConnectionOriginal = Vue.extend({
 
     // Public Interface -- to be defined in subclass
 
-    setup () {
-      throw new Error('[vue-hifi] #setup interface not implemented')
+    _setup () {
+      throw new Error('[vue-hifi] #_setup interface not implemented')
     },
 
     _setVolume () {
