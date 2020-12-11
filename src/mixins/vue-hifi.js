@@ -25,13 +25,9 @@ export default {
 
   data () {
     return {
-      _sound: null
-    }
-  },
-
-  computed: {
-    isPlaying: function() {
-      return this.$data._sound ? this.$data._sound.isPlaying : false
+      _sound: null,
+      isPlaying: false,
+      isLoading: false
     }
   },
 
@@ -54,11 +50,6 @@ export default {
     currentMetadata: {
       type: Object,
       default: null
-    },
-
-    isLoading: {
-      type: Boolean,
-      default: false
     },
 
     isStream: {
@@ -153,8 +144,7 @@ export default {
         this.pause()
       }
 
-      //this.$set(this, 'isLoading', true)
-
+      this.isLoading = true
       let sound = this._load(urls, options)
 
       if (sound) {
@@ -250,12 +240,16 @@ export default {
     */
 
     _relayPlayedEvent(sound) {
+      this.isLoading = false
+      this.isPlaying = true
       this._relayEvent('audio-played', sound);
     },
     _relayPausedEvent(sound) {
+      this.isPlaying = false
       this._relayEvent('audio-paused', sound);
     },
     _relayEndedEvent(sound) {
+      this.isPlaying = false
       this._relayEvent('audio-ended', sound);
     },
     _relayDurationChangedEvent(sound) {
@@ -265,6 +259,7 @@ export default {
       this._relayEvent('audio-position-changed', sound);
     },
     _relayLoadedEvent(sound) {
+      this.isLoading = false
       this._relayEvent('audio-loaded', sound);
     },
     _relayLoadingEvent(sound) {

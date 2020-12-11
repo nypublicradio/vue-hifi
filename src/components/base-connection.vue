@@ -97,7 +97,6 @@ let BaseConnectionOriginal = Vue.extend({
         this.$set(this, 'isLoading', false);
         this.$set(this, 'isPlaying', true);
         this.$set(this, 'error', null);
-        //this.notifyPropertyChange('isLoading');
       });
 
       this.$on('audio-paused', () => {

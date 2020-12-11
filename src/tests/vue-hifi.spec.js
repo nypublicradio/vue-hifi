@@ -79,7 +79,7 @@ describe('Vue Hifi', () => {
         const spy = jest.spyOn(wrapper.vm, 'pause')
 
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
-        wrapper.vm.$data._sound.$set(wrapper.vm.$data._sound, 'isPlaying', true)
+        wrapper.vm.$data._sound.$set(wrapper.vm, 'isPlaying', true)
         wrapper.vm.play()
         expect(spy).toHaveBeenCalledTimes(1)
     })
