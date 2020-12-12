@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/nypublicradio/vue-hifi#readme",
   "dependencies": {
+    "hls.js": "^0.14.17",
     "howler": "^2.2.1",
     "vue": "^2.6.12"
   },
