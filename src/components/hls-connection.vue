@@ -237,5 +237,8 @@ HlsConnection.canUseConnection = function ( /* audioUrl */) {
   return HLS.isSupported()
 }
 
+HlsConnection.canPlay = BaseConnection.canPlay
+HlsConnection.canPlayMimeType = BaseConnection.canPlayMimeType
+
 export default HlsConnection
 </script>

@@ -1,4 +1,5 @@
 import HowlerConnection from '../components/howler-connection'
+import HlsConnection from '../components/hls-connection'
 
 export const EVENT_MAP = [
   {event: 'audio-played',               handler: '_relayPlayedEvent'},
@@ -20,6 +21,8 @@ export const SERVICE_EVENT_MAP = [
   {event: 'new-load-request' },
   {event: 'pre-load' }
 ]
+
+const CONNECTIONS = [ HowlerConnection, HlsConnection ]
 
 export default {
 
@@ -111,20 +114,22 @@ export default {
      * Iterate the given array of URLs until a playable URL is found
      */
     _load (urls /* , options = {} */ ) {
-      // sharedAudioAccessxs
+      // sharedAudioAccess
 
       if (!(Array.isArray(urls) && urls.length > 0)) {
         return false // error
       }
-
-      for (var url in urls) {
-        //if (HowlerConnection.canPlay(url)) {
-          return new HowlerConnection({
-            propsData: {
-              urls: [ urls[url] ]
-            }
-          })
-        //}
+      for (const urlIndex in urls) {
+        for (const connectionIndex in CONNECTIONS) {  
+          const connection = CONNECTIONS[connectionIndex]
+          if (connection.canPlay(urls[urlIndex])) {
+            return new connection({
+              propsData: {
+                urls: [ urls[urlIndex] ]
+              }
+            })
+          }
+        }
       }
     },
 

@@ -98,6 +98,8 @@ HowlerConnection.canPlayMimeType = function (mimeType) {
   let audio = new Audio()
   return audio.canPlayType(mimeType) !== ""
 }
+HowlerConnection.canUseConnection = BaseConnection.canUseConnection
+HowlerConnection.canPlay = BaseConnection.canPlay
 
 export default HowlerConnection
 </script>

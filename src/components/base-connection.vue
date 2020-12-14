@@ -210,9 +210,6 @@ let BaseConnectionOriginal = Vue.extend({
 })
 
 class BaseConnection extends BaseConnectionOriginal {
-  static _setup = function (/* config */) {
-
-  }
 
   static canPlayMimeType (mimeType) {
     const mimeTypeWhiteList = this.acceptMimeTypes
@@ -228,7 +225,7 @@ class BaseConnection extends BaseConnectionOriginal {
   }
 
   static canPlay (url) {
-    let usablePlatform = BaseConnection.canUseConnection(url)
+    let usablePlatform = this.canUseConnection(url)
 
     if (!usablePlatform) {
       return false
@@ -242,10 +239,10 @@ class BaseConnection extends BaseConnectionOriginal {
         console.warn(`Attempting to play urls with an unknown mime type can be bad for performance.`)
         return true
       } else {
-        return BaseConnection.canPlayMimeType(mimeType)
+        return this.canPlayMimeType(mimeType)
       }
     } else if (url && url.mimeType) {
-      return BaseConnection.canPlayMimeType(url.mimeType)
+      return this.canPlayMimeType(url.mimeType)
     } else {
       throw new Error('[vue-hifi] #URL must be a string or object with a mimeType property')
     }
