@@ -1,18 +1,35 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
 import { createLocalVue, mount } from '@vue/test-utils'
 import { describe, test, expect } from '@jest/globals'
 import vueHifi from '../mixins/vue-hifi'
-import { EVENT_MAP } from '../mixins/vue-hifi'
 import BaseConnection from '../components/base-connection'
 import HowlerConnection from '../components/howler-connection'
 
+Vue.use(Vuex)
+//const localVue = createLocalVue()
+//localVue.use(Vuex)
+
 describe('Vue Hifi', () => {
+    let store
+    let actions
+    let state
+
+    beforeEach(() => {
+        state = { data: {} }
+        actions = {}
+        store = new Vuex.Store({
+
+        })
+    })
+
     test('it exists', () => {
         const localVue = createLocalVue()
         const testComponentType = localVue.component('test-component', {
             mixins: [vueHifi],
             render() {}
         })
-        const wrapper = mount(testComponentType, {})
+        const wrapper = mount(testComponentType, {store})
 
         expect(wrapper.is(testComponentType)).toBe(true)
 
@@ -27,10 +44,9 @@ describe('Vue Hifi', () => {
             mixins: [vueHifi],
             render() {}
         })
-        const wrapper = mount(testComponentType, {})
+        const wrapper = mount(testComponentType, {store})
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
-        expect(wrapper.vm.$data._sound).not.toBeNull()
-        expect(wrapper.vm.$data._sound).toBeInstanceOf(BaseConnection)
+        expect(wrapper.vm.$store.getters['getSound']).toBeInstanceOf(BaseConnection)
     })
 
     test('it pauses', () => {
@@ -39,10 +55,10 @@ describe('Vue Hifi', () => {
             mixins: [vueHifi],
             render() {}
         })
-        const wrapper = mount(testComponentType, {})
+        const wrapper = mount(testComponentType, {store})
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
         wrapper.vm.pause()
-        expect(wrapper.vm.$data._sound).not.toBeNull()
+        expect(wrapper.vm.$store.getters['getSound']).toBeInstanceOf(BaseConnection)
     })
 
     test('it stops', () => {
@@ -51,10 +67,10 @@ describe('Vue Hifi', () => {
             mixins: [vueHifi],
             render() {}
         })
-        const wrapper = mount(testComponentType, {})
+        const wrapper = mount(testComponentType, {store})
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
         wrapper.vm.stop()
-        expect(wrapper.vm.$data._sound).not.toBeNull()
+        expect(wrapper.vm.$store.getters['getSound']).toBeInstanceOf(BaseConnection)
     })
 
     test('it toggle pauses', () => {
@@ -63,10 +79,10 @@ describe('Vue Hifi', () => {
             mixins: [vueHifi],
             render() {}
         })
-        const wrapper = mount(testComponentType, {})
+        const wrapper = mount(testComponentType, {store})
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
         wrapper.vm.togglePause()
-        expect(wrapper.vm.$data._sound).not.toBeNull()
+        expect(wrapper.vm.$store.getters['getSound']).toBeInstanceOf(BaseConnection)
     })
 
     test('it pauses previously playing audio', () => {
@@ -75,11 +91,11 @@ describe('Vue Hifi', () => {
             mixins: [vueHifi],
             render() {}
         })
-        const wrapper = mount(testComponentType, {})
+        const wrapper = mount(testComponentType, {store})
         const spy = jest.spyOn(wrapper.vm, 'pause')
 
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
-        wrapper.vm.$data._sound.$set(wrapper.vm, 'isPlaying', true)
+        wrapper.vm.$store.commit('setIsPlaying', true)
         wrapper.vm.play()
         expect(spy).toHaveBeenCalledTimes(1)
     })
@@ -90,7 +106,7 @@ describe('Vue Hifi', () => {
             mixins: [vueHifi],
             render() {}
         })
-        const wrapper = mount(testComponentType, {})
+        const wrapper = mount(testComponentType, {store})
 
         // handle invalid inputs
         expect(wrapper.vm._load([])).toBe(false)
@@ -103,7 +119,7 @@ describe('Vue Hifi', () => {
         const testComponentType = localVue.component('test-component', {
             mixins: [vueHifi],
         })
-        const wrapper = mount(testComponentType, {})
+        const wrapper = mount(testComponentType, {store})
 
         expect(wrapper.vm._registerEvents).toBeDefined()
         expect(wrapper.vm._unregisterEvents).toBeDefined()
