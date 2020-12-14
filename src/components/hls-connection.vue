@@ -74,11 +74,15 @@ let HlsConnection = BaseConnection.extend({
 
     _setupPlayerEvents (video) {
       video.addEventListener('playing', () => {
-        if (this.loaded) {
-          this.$emit('audio-played', this)
-        } else {
+        // if (this.loaded) {
+        //   this.$emit('audio-played', this)
+        // } else {
+        //   this._signalAudioIsReady()
+        // }
+        if (!this.loaded) {
           this._signalAudioIsReady()
         }
+        this.$emit('audio-played', this)
       })
 
       video.addEventListener('pause',           ()  => this.$emit('audio-paused', this))
@@ -103,7 +107,7 @@ let HlsConnection = BaseConnection.extend({
     _signalAudioIsReady() {
       console.log('Test succeeded, signaling audio-ready');
       this.loaded = true
-      this.video.pause()
+      //this.video.pause()
       this.$emit('audio-ready')
     },
 
