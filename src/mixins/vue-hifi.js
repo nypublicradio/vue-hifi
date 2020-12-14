@@ -1,5 +1,6 @@
 import HowlerConnection from '../components/howler-connection'
 import HlsConnection from '../components/hls-connection'
+import state from '../store/vue-hifi'
 
 export const EVENT_MAP = [
   {event: 'audio-played',               handler: '_relayPlayedEvent'},
@@ -25,12 +26,17 @@ export const SERVICE_EVENT_MAP = [
 const CONNECTIONS = [ HowlerConnection, HlsConnection ]
 
 export default {
+  created () {
+    this.$store.registerModule("vue-hifi", state);
+  },
 
-  data () {
-    return {
-      _sound: null,
-      isPlaying: false,
-      isLoading: false
+  computed: {
+    isLoading () {
+      return this.$store.getters['getIsLoading']
+    },
+
+    isPlaying () {
+      return this.$store.getters['getIsPlaying']
     }
   },
 
@@ -144,34 +150,34 @@ export default {
      */
 
     play (urls, options = {}) {
-      if (this.isPlaying) {
+      if (this.$store.getters['getIsPlaying']) {
         // trigger current-sound-iterrupted
         this.pause()
       }
 
-      this.isLoading = true
+      this.$store.commit('setIsLoading', true)
       let sound = this._load(urls, options)
 
       if (sound) {
         this._registerEvents(sound)
-        this.$data._sound = sound
-        this.$data._sound.play(options)
+        this.$store.commit('setSound', sound)
+        sound.play(options)
       }
     },
 
     pause () {
       // make sure sound is playing/exists
-      this.$data._sound.pause()
+      this.$store.getters['getSound'].pause()
     },
 
     stop () {
       // make sure sound is playing/exists
-      this.$data._sound.stop()
+      this.$store.getters['getSound'].stop()
     },
 
     togglePause () {
       // make sure sound is playing/exists
-      this.$data._sound.togglePause()
+      this.$store.getters['getSound'].togglePause()
     },
 
     toggleMute () {
@@ -245,16 +251,16 @@ export default {
     */
 
     _relayPlayedEvent(sound) {
-      this.isLoading = false
-      this.isPlaying = true
+      this.$store.commit('setIsLoading', false)
+      this.$store.commit('setIsPlaying', true)
       this._relayEvent('audio-played', sound);
     },
     _relayPausedEvent(sound) {
-      this.isPlaying = false
+      this.$store.commit('setIsPlaying', false)
       this._relayEvent('audio-paused', sound);
     },
     _relayEndedEvent(sound) {
-      this.isPlaying = false
+      this.$store.commit('setIsPlaying', false)
       this._relayEvent('audio-ended', sound);
     },
     _relayDurationChangedEvent(sound) {
@@ -264,7 +270,7 @@ export default {
       this._relayEvent('audio-position-changed', sound);
     },
     _relayLoadedEvent(sound) {
-      this.isLoading = false
+      this.$store.commit('setIsLoading', false)
       this._relayEvent('audio-loaded', sound);
     },
     _relayLoadingEvent(sound) {

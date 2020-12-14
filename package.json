@@ -31,7 +31,8 @@
   "dependencies": {
     "hls.js": "^0.14.17",
     "howler": "^2.2.1",
-    "vue": "^2.6.12"
+    "vue": "^2.6.12",
+    "vuex": "^3.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
