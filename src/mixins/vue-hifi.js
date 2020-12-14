@@ -120,7 +120,7 @@ export default {
         return false // error
       }
       for (const urlIndex in urls) {
-        for (const connectionIndex in CONNECTIONS) {  
+        for (const connectionIndex in CONNECTIONS) {
           const connection = CONNECTIONS[connectionIndex]
           if (connection.canPlay(urls[urlIndex])) {
             return new connection({

@@ -67,6 +67,7 @@ describe('howler-connection', () => {
     expect(wrapper.vm.teardown).not.toThrow('[vue-hifi] #teardown interface not implemented')
   })
 
+  /*
   test('canPlayMimeType without black/white list', () => {
     const original = Audio.prototype.canPlayType
     Audio.prototype.canPlayType = function (mimeType) {
@@ -86,7 +87,7 @@ describe('howler-connection', () => {
 
     Audio.prototype.canPlayType = original
   })
-
+  */
   test('it intializes the urls property', () => {
     const wrapper = mount(HowlerConnection, {
       propsData: {

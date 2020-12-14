@@ -1,6 +1,7 @@
 <script>
 import BaseConnection from '../components/base-connection'
 import HLS from 'hls.js'
+import { getMimeType } from '../utils/mime-types'
 
 /**
  * This class connects with HLS.js to create sounds.
@@ -239,6 +240,26 @@ HlsConnection.canUseConnection = function ( /* audioUrl */) {
 
 HlsConnection.canPlay = BaseConnection.canPlay
 HlsConnection.canPlayMimeType = BaseConnection.canPlayMimeType
+
+HlsConnection.canPlay = function (url) {
+  if (!HLS.isSupported) {
+    return false
+  }
+
+  if (typeof url === 'string') {
+    let mimeType = getMimeType(url)
+
+    if (!mimeType) {
+      console.warn(`Could not determine mime type for ${url}`)
+      console.warn(`Attempting to play urls with an unknown mime type can be bad for performance.`)
+      return true
+    } else {
+      return BaseConnection.canPlayMimeType(mimeType)
+    }
+  } else {
+    throw new Error('[vue-hifi] #URL must be a string or object with a mimeType property')
+  }
+}
 
 export default HlsConnection
 </script>

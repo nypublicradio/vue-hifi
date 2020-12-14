@@ -1,8 +1,7 @@
 <script>
 import Vue from 'vue'
-import { getMimeType } from '../utils/mime-types'
 
-let BaseConnectionOriginal = Vue.extend({
+let BaseConnection = Vue.extend({
 
   created () {
     this.init()
@@ -209,47 +208,16 @@ let BaseConnectionOriginal = Vue.extend({
   }
 })
 
-class BaseConnection extends BaseConnectionOriginal {
+BaseConnection.canPlayMimeType = function(mimeType) {
+  const mimeTypeWhiteList = this.acceptMimeTypes
+  const mimeTypeBlackList = this.rejectMimeTypes
 
-  static canPlayMimeType (mimeType) {
-    const mimeTypeWhiteList = this.acceptMimeTypes
-    const mimeTypeBlackList = this.rejectMimeTypes
-
-    if (mimeTypeWhiteList) {
-      return mimeTypeWhiteList.includes(mimeType)
-    } else if (mimeTypeBlackList) {
-      return !mimeTypeBlackList.includes(mimeType)
-    } else {
-      return true // assume true
-    }
-  }
-
-  static canPlay (url) {
-    let usablePlatform = this.canUseConnection(url)
-
-    if (!usablePlatform) {
-      return false
-    }
-
-    if (typeof url === 'string') {
-      let mimeType = getMimeType(url)
-
-      if (!mimeType) {
-        console.warn(`Could not determine mime type for ${url}`)
-        console.warn(`Attempting to play urls with an unknown mime type can be bad for performance.`)
-        return true
-      } else {
-        return this.canPlayMimeType(mimeType)
-      }
-    } else if (url && url.mimeType) {
-      return this.canPlayMimeType(url.mimeType)
-    } else {
-      throw new Error('[vue-hifi] #URL must be a string or object with a mimeType property')
-    }
-  }
-
-  static canUseConnection () {
-    return true
+  if (mimeTypeWhiteList) {
+    return mimeTypeWhiteList.includes(mimeType)
+  } else if (mimeTypeBlackList) {
+    return !mimeTypeBlackList.includes(mimeType)
+  } else {
+    return true // assume true
   }
 }
 

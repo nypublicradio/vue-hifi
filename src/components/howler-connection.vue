@@ -1,6 +1,7 @@
 <script>
 import { Howl } from 'howler'
 import BaseConnection from '../components/base-connection'
+import { getMimeType } from '../utils/mime-types'
 
 let HowlerConnection = BaseConnection.extend({
 
@@ -94,12 +95,22 @@ let HowlerConnection = BaseConnection.extend({
   }
 })
 
-HowlerConnection.canPlayMimeType = function (mimeType) {
-  let audio = new Audio()
-  return audio.canPlayType(mimeType) !== ""
+HowlerConnection.canPlay = function (url) {
+  if (typeof url === 'string') {
+    let mimeType = getMimeType(url)
+
+    if (!mimeType) {
+      console.warn(`Could not determine mime type for ${url}`)
+      console.warn(`Attempting to play urls with an unknown mime type can be bad for performance.`)
+      return true
+    } else {
+      let audio = new Audio()
+      return audio.canPlayType(mimeType) !== ""
+    }
+  } else {
+    throw new Error('[vue-hifi] #URL must be a string or object with a mimeType property')
+  }
 }
-HowlerConnection.canUseConnection = BaseConnection.canUseConnection
-HowlerConnection.canPlay = BaseConnection.canPlay
 
 export default HowlerConnection
 </script>
