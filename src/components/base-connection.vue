@@ -1,11 +1,7 @@
 <script>
 import Vue from 'vue'
 
-let BaseConnection = Vue.extend({
-
-  created () {
-    this.init()
-  },
+const BaseConnection = Vue.extend({
 
   props: {
     debugName: { // computed
@@ -84,56 +80,60 @@ let BaseConnection = Vue.extend({
     }
   },
 
+  created () {
+    this.init()
+  },
+
   methods: {
 
     // Initializer
 
     init () {
-      this.$set(this, 'isLoading', true);
+      this.$set(this, 'isLoading', true)
 
       this.$on('audio-played', () => {
-        this.$set(this, 'hasPlayed', true);
-        this.$set(this, 'isLoading', false);
-        this.$set(this, 'isPlaying', true);
-        this.$set(this, 'error', null);
-      });
+        this.$set(this, 'hasPlayed', true)
+        this.$set(this, 'isLoading', false)
+        this.$set(this, 'isPlaying', true)
+        this.$set(this, 'error', null)
+      })
 
       this.$on('audio-paused', () => {
-        this.$set(this, 'isPlaying', false);
-      });
+        this.$set(this, 'isPlaying', false)
+      })
 
       this.$on('audio-ended', () => {
-        this.$set(this, 'isPlaying', false);
-      });
+        this.$set(this, 'isPlaying', false)
+      })
 
       this.$on('audio-ready', () => {
-        this.$set(this, 'duration', this._audioDuration());
-      });
+        this.$set(this, 'duration', this._audioDuration())
+      })
 
       this.$on('audio-load-error', (e) => {
         if (this.hasPlayed) {
-          this.$set(this, 'isLoading', false);
-          this.$set(this, 'isPlaying', false);
+          this.$set(this, 'isLoading', false)
+          this.$set(this, 'isPlaying', false)
         }
-        this.$set(this, 'error', e);
-      });
+        this.$set(this, 'error', e)
+      })
 
       this.$on('audio-loaded', () => {
-        this.$set(this, 'isLoading', false);
-      });
+        this.$set(this, 'isLoading', false)
+      })
 
       this.$on('audio-loading', (info) => {
         if (info && info.percentLoaded) {
-          this.$set(this, 'percentLoaded', info.percentLoaded);
+          this.$set(this, 'percentLoaded', info.percentLoaded)
         }
-      });
+      })
 
-      this._detectTimeouts();
+      this._detectTimeouts()
 
       try {
-        this._setup();
-      } catch(e) {
-        this.$emit('audio-load-error', `Error in _setup ${e.message}`);
+        this._setup()
+      } catch (e) {
+        this.$emit('audio-load-error', `Error in _setup ${e.message}`)
       }
     },
 
@@ -208,7 +208,7 @@ let BaseConnection = Vue.extend({
   }
 })
 
-BaseConnection.canPlayMimeType = function(mimeType) {
+BaseConnection.canPlayMimeType = function (mimeType) {
   const mimeTypeWhiteList = this.acceptMimeTypes
   const mimeTypeBlackList = this.rejectMimeTypes
 
