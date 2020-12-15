@@ -48,3 +48,6 @@ I’m still working on a few Vue-related issues, with which I could use some sug
 2. In my initial integration tests with `wnyc-3000-vue`, I’m seeing eslint warnings in the console. I’d like to configure `vue-hifi` to use eslint but my first few attempts haven’t fixed the warnings.
 3. I’m still working out some mobile issues that revolve around the user needing to click `play` twice to get the audio to play due to some restrictions on autoplaying audio. `ember-hifi` had some workarounds that I’m trying to emulate while also keeping things simple.
 
+### Run Development Server
+
+`npm run dev`

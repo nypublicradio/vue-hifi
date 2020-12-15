@@ -1,6 +1,6 @@
 import HowlerConnection from '../components/howler-connection'
 import HlsConnection from '../components/hls-connection'
-import state from '../store/vue-hifi'
+import state from '../store'
 
 export const EVENT_MAP = [
   {event: 'audio-played',               handler: '_relayPlayedEvent'},
