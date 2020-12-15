@@ -4,7 +4,6 @@ import HlsConnection from '../components/hls-connection'
 import HLS from 'hls.js'
 
 describe('hls-connection', () => {
-
   test('it exists', () => {
     const wrapper = mount(HlsConnection, {})
     expect(wrapper.is(HlsConnection)).toBe(true)
@@ -12,12 +11,12 @@ describe('hls-connection', () => {
 
   test('it only plays HLS streams', () => {
     expect(HlsConnection.acceptMimeTypes).toBeDefined()
-    expect(HlsConnection.acceptMimeTypes).toContain( 'application/vnd.apple.mpegurl' )
+    expect(HlsConnection.acceptMimeTypes).toContain('application/vnd.apple.mpegurl')
   })
 
   test('it checks if HLS.js is supported', () => {
     expect(HlsConnection.canUseConnection).toBeDefined()
-    
+
     const isSupported = HLS.isSupported
     HLS.isSupported = function () {
       return true

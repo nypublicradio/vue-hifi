@@ -1,7 +1,7 @@
-import vueHifi from "./mixins/vue-hifi"
+import vueHifi from './mixins/vue-hifi'
 
 export default {
-  install(Vue, options) {
+  install (Vue, options) {
     Vue.mixin('vue-hifi', vueHifi)
   }
 }

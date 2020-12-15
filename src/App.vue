@@ -1,23 +1,14 @@
 <template>
   <div id="app">
-    <component :is="layout">
-      <router-view />
-    </component>
+    <play-button />
   </div>
 </template>
 
 <script>
-  // layouts
-  import Default from './layouts/Default'
+import PlayButton from '../demo/play-button'
 
-  const defaultLayout = 'default'
-
-  export default {
-    components: { Default },
-    computed: {
-      layout () {
-        return (this.$route.meta.layout || defaultLayout + '-layout')
-      }
-    }
-  }
+export default {
+  name: 'vue-hifi',
+  components: { PlayButton }
+}
 </script>

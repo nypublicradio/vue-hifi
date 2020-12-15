@@ -1,9 +1,9 @@
+/* eslint-disable */
 import { describe, test, expect } from '@jest/globals'
 import { mount } from '@vue/test-utils'
 import HowlerConnection from '../components/howler-connection'
 
 describe('howler-connection', () => {
-
   test('it exists', () => {
     const wrapper = mount(HowlerConnection, {})
     expect(wrapper.is(HowlerConnection)).toBe(true)
@@ -28,6 +28,7 @@ describe('howler-connection', () => {
     wrapper.vm.play()
 
     expect(wrapper.vm.$data._howl).not.toBeNull()
+
     expect(wrapper.vm.$data._howl).toBeInstanceOf(Howl)
   })
 
@@ -122,7 +123,7 @@ describe('howler-connection', () => {
     wrapper.vm._onstop()
     wrapper.vm._onloaderror()
     wrapper.vm._onseek()
-    let emitted = wrapper.emitted()
+    const emitted = wrapper.emitted()
     expect(emitted['audio-loaded']).toBeDefined()
     expect(emitted['audio-loaded'].length).toBe(1)
     expect(emitted['audio-ready']).toBeDefined()
