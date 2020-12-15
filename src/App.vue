@@ -8,7 +8,7 @@
 import PlayButton from '../demo/play-button'
 
 export default {
-  name: 'Vue HiFi',
+  name: 'vue-hifi',
   components: { PlayButton }
 }
 </script>
