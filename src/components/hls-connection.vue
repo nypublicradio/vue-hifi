@@ -75,15 +75,10 @@ let HlsConnection = BaseConnection.extend({
 
     _setupPlayerEvents (video) {
       video.addEventListener('playing', () => {
-        if (this.loaded) {
-          this.$emit('audio-played', this)
-        } else {
+        if (!this.loaded) {
           this._signalAudioIsReady()
         }
-        //if (!this.loaded) {
-        //  this._signalAudioIsReady()
-        //}
-        //this.$emit('audio-played', this)
+        this.$emit('audio-played', this)
       })
 
       video.addEventListener('pause',           ()  => this.$emit('audio-paused', this))

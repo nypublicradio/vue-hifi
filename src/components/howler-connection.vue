@@ -85,8 +85,8 @@ let HowlerConnection = BaseConnection.extend({
 
     },
 
-    _setVolume () {
-
+    _setVolume (volume) {
+      this.$data._howl.volume(volume/100)
     },
 
     teardown () {

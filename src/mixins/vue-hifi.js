@@ -41,24 +41,25 @@ export default {
 
     isMobileDevice () {
       return ('ontouchstart' in window)
-    }
-  },
-
-  props: {
-    isMuted: {
-      type: Boolean,
-      default: false
-    },
-
-    
-    defaultVolume: {
-      type: Number,
-      default: 1.0
     },
 
     volume: {
-      type: Number,
-      default: 1.0
+      get: function () {
+        return this.$store.getters['getVolume']
+      },
+      set: function (volume) {
+        const sound = this.$store.getters['getSound']
+        if (sound) {
+          sound._setVolume(volume)
+        }
+        this.$store.commit('setVolume', volume)
+      }
+    },
+
+    isMuted: {
+      get: function () {
+        return this.$store.getters['getIsMuted']
+      }
     }
   },
 
@@ -149,7 +150,13 @@ export default {
     },
 
     toggleMute () {
-
+      const isMuted = !(this.$store.getters['getIsMuted'])
+      this.$store.commit('setIsMuted', isMuted)
+      const newVolume = isMuted ? 0 : this.volume
+      const sound = this.$store.getters['getSound']
+      if (sound) {
+        sound._setVolume(newVolume)
+      }
     },
 
     /**

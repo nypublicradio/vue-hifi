@@ -4,7 +4,9 @@ export default {
   state: {
     isLoading: false,
     isPlaying: false,
-    sound: null
+    sound: null,
+    volume: 100,
+    isMuted: false
   },
   getters: {
     getSound (state) {
@@ -15,6 +17,12 @@ export default {
     },
     getIsPlaying (state) {
       return state.isPlaying
+    },
+    getVolume (state) {
+      return state.volume
+    },
+    getIsMuted (state) {
+      return state.isMuted
     }
   },
 
@@ -27,6 +35,12 @@ export default {
     },
     setIsPlaying (state, isPlaying) {
       state.isPlaying = isPlaying
+    },
+    setVolume (state, volume) {
+      state.volume = volume
+    },
+    setIsMuted (state, isMuted) {
+      state.isMuted = isMuted
     }
   }
 }
