@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { createLocalVue, mount } from '@vue/test-utils'
@@ -7,8 +8,8 @@ import BaseConnection from '../components/base-connection'
 import HowlerConnection from '../components/howler-connection'
 
 Vue.use(Vuex)
-//const localVue = createLocalVue()
-//localVue.use(Vuex)
+// const localVue = createLocalVue()
+// localVue.use(Vuex)
 
 describe('Vue Hifi', () => {
     let store
@@ -25,11 +26,11 @@ describe('Vue Hifi', () => {
 
     test('it exists', () => {
         const localVue = createLocalVue()
-        const testComponentType = localVue.component('test-component', {
+        const testComponentType = localVue.component('TestComponent', {
             mixins: [vueHifi],
-            render() {}
+            render () {}
         })
-        const wrapper = mount(testComponentType, {store})
+        const wrapper = mount(testComponentType, { store })
 
         expect(wrapper.is(testComponentType)).toBe(true)
 
@@ -38,58 +39,58 @@ describe('Vue Hifi', () => {
 
     test('it plays', () => {
         const localVue = createLocalVue()
-        const testComponentType = localVue.component('test-component', {
+        const testComponentType = localVue.component('TestComponent', {
             mixins: [vueHifi],
-            render() {}
+            render () {}
         })
-        const wrapper = mount(testComponentType, {store})
+        const wrapper = mount(testComponentType, { store })
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
-        expect(wrapper.vm.$store.getters['getSound']).toBeInstanceOf(BaseConnection)
+        expect(wrapper.vm.$store.getters.getSound).toBeInstanceOf(BaseConnection)
     })
 
     test('it pauses', () => {
         const localVue = createLocalVue()
-        const testComponentType = localVue.component('test-component', {
+        const testComponentType = localVue.component('TestComponent', {
             mixins: [vueHifi],
-            render() {}
+            render () {}
         })
-        const wrapper = mount(testComponentType, {store})
+        const wrapper = mount(testComponentType, { store })
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
         wrapper.vm.pause()
-        expect(wrapper.vm.$store.getters['getSound']).toBeInstanceOf(BaseConnection)
+        expect(wrapper.vm.$store.getters.getSound).toBeInstanceOf(BaseConnection)
     })
 
     test('it stops', () => {
         const localVue = createLocalVue()
-        const testComponentType = localVue.component('test-component', {
+        const testComponentType = localVue.component('TestComponent', {
             mixins: [vueHifi],
-            render() {}
+            render () {}
         })
-        const wrapper = mount(testComponentType, {store})
+        const wrapper = mount(testComponentType, { store })
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
         wrapper.vm.stop()
-        expect(wrapper.vm.$store.getters['getSound']).toBeInstanceOf(BaseConnection)
+        expect(wrapper.vm.$store.getters.getSound).toBeInstanceOf(BaseConnection)
     })
 
     test('it toggle pauses', () => {
         const localVue = createLocalVue()
-        const testComponentType = localVue.component('test-component', {
+        const testComponentType = localVue.component('TestComponent', {
             mixins: [vueHifi],
-            render() {}
+            render () {}
         })
-        const wrapper = mount(testComponentType, {store})
+        const wrapper = mount(testComponentType, { store })
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
         wrapper.vm.togglePause()
-        expect(wrapper.vm.$store.getters['getSound']).toBeInstanceOf(BaseConnection)
+        expect(wrapper.vm.$store.getters.getSound).toBeInstanceOf(BaseConnection)
     })
 
     test('it pauses previously playing audio', () => {
         const localVue = createLocalVue()
-        const testComponentType = localVue.component('test-component', {
+        const testComponentType = localVue.component('TestComponent', {
             mixins: [vueHifi],
-            render() {}
+            render () {}
         })
-        const wrapper = mount(testComponentType, {store})
+        const wrapper = mount(testComponentType, { store })
         const spy = jest.spyOn(wrapper.vm, 'pause')
 
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
@@ -100,11 +101,11 @@ describe('Vue Hifi', () => {
 
     test('it loads a url', () => {
         const localVue = createLocalVue()
-        const testComponentType = localVue.component('test-component', {
+        const testComponentType = localVue.component('TestComponent', {
             mixins: [vueHifi],
-            render() {}
+            render () {}
         })
-        const wrapper = mount(testComponentType, {store})
+        const wrapper = mount(testComponentType, { store })
 
         // handle invalid inputs
         expect(wrapper.vm._load([])).toBe(false)
@@ -114,15 +115,15 @@ describe('Vue Hifi', () => {
 
     test('it registers/unregisters to receive events from a sound', () => {
         const localVue = createLocalVue()
-        const testComponentType = localVue.component('test-component', {
-            mixins: [vueHifi],
+        const testComponentType = localVue.component('TestComponent', {
+            mixins: [vueHifi]
         })
-        const wrapper = mount(testComponentType, {store})
+        const wrapper = mount(testComponentType, { store })
 
         expect(wrapper.vm._registerEvents).toBeDefined()
         expect(wrapper.vm._unregisterEvents).toBeDefined()
 
-        let sound = new HowlerConnection({ urls: ['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'] })
+        const sound = new HowlerConnection({ urls: ['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'] })
 
         const spyOn = jest.spyOn(sound, '$on')
         wrapper.vm._registerEvents(sound)

@@ -65,8 +65,8 @@ describe('base-connection', () => {
 
   test('static methods exist', () => {
     expect(BaseConnection.canPlayMimeType).toBeDefined()
-    //expect(BaseConnection.canPlay).toBeDefined()
-    //expect(BaseConnection.canUseConnection).toBeDefined()
+    // expect(BaseConnection.canPlay).toBeDefined()
+    // expect(BaseConnection.canUseConnection).toBeDefined()
   })
 
   test('canPlayMimeType without black/white list', () => {
@@ -74,7 +74,7 @@ describe('base-connection', () => {
   })
 
   test('canPlayMimeType with whitelist', () => {
-    BaseConnection.acceptMimeTypes = [ 'application/vnd.apple.mpegurl', '2', '3' ]
+    BaseConnection.acceptMimeTypes = ['application/vnd.apple.mpegurl', '2', '3']
     expect(BaseConnection.canPlayMimeType('application/vnd.apple.mpegurl')).toBe(true)
     expect(BaseConnection.canPlayMimeType('2')).toBe(true)
     expect(BaseConnection.canPlayMimeType('3')).toBe(true)
@@ -83,7 +83,7 @@ describe('base-connection', () => {
   })
 
   test('canPlayMimeType with blacklist', () => {
-    BaseConnection.rejectMimeTypes = [ 'application/vnd.apple.mpegurl', '2', '3' ]
+    BaseConnection.rejectMimeTypes = ['application/vnd.apple.mpegurl', '2', '3']
     expect(BaseConnection.canPlayMimeType('application/vnd.apple.mpegurl')).toBe(false)
     expect(BaseConnection.canPlayMimeType('2')).toBe(false)
     expect(BaseConnection.canPlayMimeType('3')).toBe(false)
@@ -107,7 +107,7 @@ describe('base-connection', () => {
   test('canPlay with url.mimeType', () => {
     expect(BaseConnection.canPlay({ mimeType: 'application/vnd.apple.mpegurl' })).toBe(true)
   })
-  
+
   test('canPlay throws an error for invalid url', () => {
     expect(BaseConnection.canPlay).toThrow('[vue-hifi] #URL must be a string or object with a mimeType property')
   })
