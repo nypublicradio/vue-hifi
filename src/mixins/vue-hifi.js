@@ -37,14 +37,14 @@ export default {
 
     isPlaying () {
       return this.$store.getters['getIsPlaying']
+    },
+
+    isMobileDevice () {
+      return ('ontouchstart' in window)
     }
   },
 
   props: {
-    isMobileDevice: {
-      type: Boolean,
-      default: false
-    },
 
     useSharedAudioAccess: {
       type: Boolean,
@@ -120,8 +120,6 @@ export default {
      * Iterate the given array of URLs until a playable URL is found
      */
     _load (urls /* , options = {} */ ) {
-      // sharedAudioAccess
-
       if (!(Array.isArray(urls) && urls.length > 0)) {
         return false // error
       }
@@ -161,8 +159,29 @@ export default {
       if (sound) {
         this._registerEvents(sound)
         this.$store.commit('setSound', sound)
-        sound.play(options)
+        this._attemptToPlaySound(sound, options)
       }
+    },
+
+    _attemptToPlaySound(sound, options) {
+      if (this.isMobileDevice) {
+        let touchPlay = ()=> {
+          this.debug(`triggering sound play from document touch`);
+          sound.play();
+        };
+
+        document.addEventListener('touchstart', touchPlay, { passive: true });
+
+        //let blockCheck = later(() => {
+        //  this.debug(`Looks like the mobile browser blocked an autoplay trying to play sound with url: ${sound.get('url')}`);
+        //}, 2000);
+
+        sound.$once('audio-played', () => {
+          document.removeEventListener('touchstart', touchPlay);
+          //cancel(blockCheck);
+        });
+      }
+      sound.play(options)
     },
 
     pause () {
