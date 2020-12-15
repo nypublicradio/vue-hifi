@@ -34,8 +34,6 @@ describe('Vue Hifi', () => {
         expect(wrapper.is(testComponentType)).toBe(true)
 
         wrapper.vm.toggleMute()
-        wrapper.vm.fastForward()
-        wrapper.vm.rewind()
     })
 
     test('it plays', () => {

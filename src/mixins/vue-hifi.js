@@ -45,67 +45,15 @@ export default {
   },
 
   props: {
-
-    useSharedAudioAccess: {
-      type: Boolean,
-      default: false
-    },
-
-    currentSound: {
-      type: Object,
-      default: null
-    },
-
-    currentMetadata: {
-      type: Object,
-      default: null
-    },
-
-    isStream: {
-      type: Boolean,
-      default: true
-    },
-
-    isFastForwardable: {
-      type: Boolean,
-      default: false
-    },
-
-    isRewindable: {
-      type: Boolean,
-      default: false
-    },
-
     isMuted: {
       type: Boolean,
       default: false
     },
 
-    duration: {
-      type: Number,
-      default: 0.0
-    },
-
-    percentLoaded: {
-      type: Number,
-      default: 0.0
-    },
-
-    // pollInterval (needed?)
-
-    id3TagMetadata: {
-      type: Object,
-      default: null
-    },
-
+    
     defaultVolume: {
       type: Number,
       default: 1.0
-    },
-
-    position: {
-      type: Number,
-      default: 0.0
     },
 
     volume: {
@@ -119,7 +67,8 @@ export default {
     /**
      * Iterate the given array of URLs until a playable URL is found
      */
-    _load (urls /* , options = {} */ ) {
+
+    _load (urls) {
       if (!(Array.isArray(urls) && urls.length > 0)) {
         return false // error
       }
@@ -200,14 +149,6 @@ export default {
     },
 
     toggleMute () {
-
-    },
-
-    fastForward () {
-
-    },
-
-    rewind () {
 
     },
 
