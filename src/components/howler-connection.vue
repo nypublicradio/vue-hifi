@@ -26,7 +26,7 @@ const HowlerConnection = BaseConnection.extend({
       this.$emit('audio-paused', this)
     },
 
-    onend: function () {
+    _onend: function () {
       this.$emit('audio-ended', this)
     },
 
