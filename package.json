@@ -2,7 +2,6 @@
   "name": "vue-hifi",
   "version": "0.0.1",
   "description": "The easy way to play audio in your Vue app.",
-  "main": "index.js",
   "scripts": {
     "dev": "vue serve src/main.js",
     "test": "jest --silent",
