@@ -49,7 +49,7 @@ const HowlerConnection = BaseConnection.extend({
         autoplay: false,
         preload: true,
         html5: true, // force native audio
-        volume: 1,
+        volume: this.volume ? this.volume / 100 : 1,
         format: ['aac', 'mp3'], // needed for missing file extension
         onload: this._onload,
         onplay: this._onplay,

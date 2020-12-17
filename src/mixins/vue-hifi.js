@@ -79,7 +79,8 @@ export default {
           if (Connection.canPlay(urls[urlIndex])) {
             return new Connection({
               propsData: {
-                urls: [urls[urlIndex]]
+                urls: [urls[urlIndex]],
+                volume: this.$store.getters['vue-hifi/getVolume']
               }
             })
           }

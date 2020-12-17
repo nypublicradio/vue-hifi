@@ -96,7 +96,7 @@ const HlsConnection = BaseConnection.extend({
         // get an error, we're outta here
 
         console.log('Testing if audio is ready')
-        this.video.volume = 1
+        this.video.volume = this.volume ? this.volume / 100 : 1
         this.video.play()
       }
     },
