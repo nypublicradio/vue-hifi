@@ -1,7 +1,7 @@
 <script>
 import Vue from 'vue'
 
-let uniqueConnectionId = 0;
+let uniqueConnectionId = 0
 
 const BaseConnection = Vue.extend({
 

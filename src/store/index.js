@@ -1,4 +1,4 @@
-let connectionCache = {}
+const connectionCache = {}
 
 export default {
   state: () => ({
@@ -32,7 +32,7 @@ export default {
 
   mutations: {
     setCurrentSound (state, currentSound) {
-      if (state.currentSound != currentSound.uuid) {
+      if (state.currentSound && state.currentSound !== currentSound.uuid) {
         delete connectionCache[state.currentSound]
       }
       connectionCache[currentSound.uuid] = currentSound
