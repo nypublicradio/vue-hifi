@@ -61,7 +61,10 @@ const HowlerConnection = BaseConnection.extend({
       })
     },
 
-    play (/* { position } = {} */) {
+    play ({ position } = {}) {
+      if (typeof position !== 'undefined') {
+        this._setPosition(position)
+      }
       this.$data._howl.play()
     },
 
@@ -74,15 +77,16 @@ const HowlerConnection = BaseConnection.extend({
     },
 
     _audioDuration () {
-
+      return this.$data._howl.duration() * 1000
     },
 
     _currentPosition () {
-
+      return this.$data._howl.seek() * 1000
     },
 
-    _setPosition () {
-
+    _setPosition (position) {
+      this.$data._howl.seek(position / 1000)
+      return this._currentPosition()
     },
 
     _setVolume (volume) {
@@ -90,7 +94,6 @@ const HowlerConnection = BaseConnection.extend({
     },
 
     teardown () {
-
     }
   }
 })

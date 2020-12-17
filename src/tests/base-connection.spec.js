@@ -37,7 +37,6 @@ describe('base-connection', () => {
 
   test('internal methods work', () => {
     const wrapper = mount(BaseConnection, {})
-    wrapper.vm._detectTimeouts()
     wrapper.vm.willDestroy()
   })
 
@@ -47,15 +46,12 @@ describe('base-connection', () => {
         _setup () {}
       }
     })
-    expect(wrapper.vm.debugName).toBe('base-connection')
-    expect(wrapper.vm.pollInterval).toBe(1000)
-    expect(wrapper.vm.timeout).toBe(30000)
     expect(wrapper.vm.hasPlayed).toBe(false)
     expect(wrapper.vm.isLoading).toBe(true)
     expect(wrapper.vm.isPlaying).toBe(false)
     expect(wrapper.vm.isErrored).toBe(false)
     expect(wrapper.vm.error).toBe(null)
-    expect(wrapper.vm.isStream).toBe(false)
+    expect(wrapper.vm.isStream).toBe(true)
     expect(wrapper.vm.isFastForwardable).toBe(false)
     expect(wrapper.vm.isRewindable).toBe(false)
     expect(wrapper.vm.duration).toBe(0)

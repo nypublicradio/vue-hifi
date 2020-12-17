@@ -108,6 +108,11 @@ describe('howler-connection', () => {
     const wrapper = mount(HowlerConnection, {
 
     })
+    wrapper.vm.$data._howl = {
+      seek () {
+        return 0
+      }
+    }
     expect(wrapper.vm._onload).toBeDefined()
     expect(wrapper.vm._onplay).toBeDefined()
     expect(wrapper.vm._onpause).toBeDefined()

@@ -16,13 +16,6 @@ export const EVENT_MAP = [
   { event: 'audio-metadata-changed', handler: '_relayMetadataChangedEvent' }
 ]
 
-export const SERVICE_EVENT_MAP = [
-  { event: 'current-sound-changed' },
-  { event: 'current-sound-interrupted' },
-  { event: 'new-load-request' },
-  { event: 'pre-load' }
-]
-
 const CONNECTIONS = [HowlerConnection, HlsConnection]
 
 export default {
@@ -100,8 +93,7 @@ export default {
 
     play (urls, options = {}) {
       if (this.$store.getters['vue-hifi/getIsPlaying']) { // eslint-disable-line
-        // trigger current-sound-iterrupted
-        this.pause()
+        this.stop()
       }
 
       this.$store.commit('vue-hifi/setIsLoading', true)
@@ -136,18 +128,24 @@ export default {
     },
 
     pause () {
-      // make sure sound is playing/exists
-      this.$store.getters['vue-hifi/getCurrentSound'].pause() // eslint-disable-line
+      const sound = this.$store.getters['vue-hifi/getCurrentSound']  // eslint-disable-line
+      if (sound) {
+        sound.pause()
+      }
     },
 
     stop () {
-      // make sure sound is playing/exists
-      this.$store.getters['vue-hifi/getCurrentSound'].stop() // eslint-disable-line
+      const sound = this.$store.getters['vue-hifi/getCurrentSound']  // eslint-disable-line
+      if (sound) {
+        sound.stop()
+      }
     },
 
     togglePause () {
-      // make sure sound is playing/exists
-      this.$store.getters['vue-hifi/getCurrentSound'].togglePause() // eslint-disable-line
+      const sound = this.$store.getters['vue-hifi/getCurrentSound']  // eslint-disable-line
+      if (sound) {
+        sound.togglePause()
+      }
     },
 
     toggleMute () {

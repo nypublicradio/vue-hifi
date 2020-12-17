@@ -6,21 +6,6 @@ let uniqueConnectionId = 0
 const BaseConnection = Vue.extend({
 
   props: {
-    debugName: { // computed
-      type: String,
-      default: 'base-connection'
-    },
-
-    pollInterval: {
-      type: Number,
-      default: 1000
-    },
-
-    timeout: {
-      type: Number,
-      default: 30000
-    },
-
     hasPlayed: {
       type: Boolean,
       default: false
@@ -36,7 +21,7 @@ const BaseConnection = Vue.extend({
       default: false
     },
 
-    isErrored: { // computed
+    isErrored: {
       type: Boolean,
       default: false
     },
@@ -46,39 +31,40 @@ const BaseConnection = Vue.extend({
       default: null
     },
 
-    isStream: { // computed
-      type: Boolean,
-      default: false
-    },
-
-    isFastForwardable: {
-      type: Boolean,
-      default: false
-    },
-
-    isRewindable: {
-      type: Boolean,
-      default: false
-    },
-
-    duration: {
-      type: Number,
-      default: 0
-    },
-
-    percentLoaded: {
-      type: Number,
-      default: 0
-    },
-
-    position: { // computed
-      type: Number,
-      default: 0
-    },
-
     urls: {
       type: Array,
       default: undefined
+    },
+
+    volume: {
+      type: Number,
+      default: 100
+    }
+  },
+
+  computed: {
+    isStream () {
+      return true // only streams supported so far
+    },
+
+    isFastForwardable () {
+      return false
+    },
+
+    isRewindable () {
+      return false
+    },
+
+    duration () {
+      return 0
+    },
+
+    percentLoaded () {
+      return 0
+    },
+
+    position () {
+      return 0
     }
   },
 
@@ -114,7 +100,7 @@ const BaseConnection = Vue.extend({
       })
 
       this.$on('audio-ready', () => {
-        this.$set(this, 'duration', this._audioDuration())
+        // this.$set(this, 'duration', this._audioDuration())
       })
 
       this.$on('audio-load-error', (e) => {
@@ -135,8 +121,6 @@ const BaseConnection = Vue.extend({
         }
       })
 
-      this._detectTimeouts()
-
       try {
         this._setup()
       } catch (e) {
@@ -150,21 +134,11 @@ const BaseConnection = Vue.extend({
       // what is vue equivalent to Ember.willDestroy()?
     },
 
-    // Internal Methods
-
-    _detectTimeouts () {
-
-    },
-
     // Public Interface
 
-    fastForward () {
+    fastForward () {},
 
-    },
-
-    rewind () {
-
-    },
+    rewind () {},
 
     togglePause () {
       if (this.isPlaying) {
