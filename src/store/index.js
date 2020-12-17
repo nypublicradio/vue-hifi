@@ -33,7 +33,9 @@ export default {
   mutations: {
     setCurrentSound (state, currentSound) {
       if (state.currentSound && state.currentSound !== currentSound.uuid) {
+        const oldSound = connectionCache[state.currentSound]
         delete connectionCache[state.currentSound]
+        oldSound.$destroy()
       }
       connectionCache[currentSound.uuid] = currentSound
       state.currentSound = currentSound.uuid

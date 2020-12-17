@@ -77,6 +77,10 @@ const BaseConnection = Vue.extend({
     this.init()
   },
 
+  beforeDestroy () {
+    this.teardown()
+  },
+
   methods: {
 
     // Initializer

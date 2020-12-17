@@ -94,6 +94,9 @@ const HowlerConnection = BaseConnection.extend({
     },
 
     teardown () {
+      if (this.$data._howl) {
+        this.$data._howl.unload()
+      }
     }
   }
 })
