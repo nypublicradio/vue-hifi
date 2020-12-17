@@ -1,15 +1,20 @@
+let connectionCache = {}
+
 export default {
   state: () => ({
     isLoading: false,
     isPlaying: false,
-    sound: null,
+    currentSound: null,
     volume: 100,
     isMuted: false
   }),
 
   getters: {
-    getSound (state) {
-      return state.sound
+    getCurrentSound (state) {
+      if (state.currentSound && connectionCache[state.currentSound]) {
+        return connectionCache[state.currentSound]
+      }
+      return null
     },
     getIsLoading (state) {
       return state.isLoading
@@ -26,8 +31,12 @@ export default {
   },
 
   mutations: {
-    setSound (state, sound) {
-      state.sound = sound
+    setCurrentSound (state, currentSound) {
+      if (state.currentSound != currentSound.uuid) {
+        delete connectionCache[state.currentSound]
+      }
+      connectionCache[currentSound.uuid] = currentSound
+      state.currentSound = currentSound.uuid
     },
     setIsLoading (state, isLoading) {
       state.isLoading = isLoading

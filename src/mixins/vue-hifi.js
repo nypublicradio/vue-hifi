@@ -48,7 +48,7 @@ export default {
         return this.$store.getters['vue-hifi/getVolume'] // eslint-disable-line
       },
       set: function (volume) {
-        const sound = this.$store.getters['vue-hifi/getSound'] // eslint-disable-line
+        const sound = this.$store.getters['vue-hifi/getCurrentSound'] // eslint-disable-line
         if (sound) {
           sound._setVolume(volume)
         }
@@ -108,7 +108,7 @@ export default {
 
       if (sound) {
         this._registerEvents(sound)
-        this.$store.commit('vue-hifi/setSound', sound)
+        this.$store.commit('vue-hifi/setCurrentSound', sound)
         this._attemptToPlaySound(sound, options)
       }
     },
@@ -136,24 +136,24 @@ export default {
 
     pause () {
       // make sure sound is playing/exists
-      this.$store.getters['vue-hifi/getSound'].pause() // eslint-disable-line
+      this.$store.getters['vue-hifi/getCurrentSound'].pause() // eslint-disable-line
     },
 
     stop () {
       // make sure sound is playing/exists
-      this.$store.getters['vue-hifi/getSound'].stop() // eslint-disable-line
+      this.$store.getters['vue-hifi/getCurrentSound'].stop() // eslint-disable-line
     },
 
     togglePause () {
       // make sure sound is playing/exists
-      this.$store.getters['vue-hifi/getSound'].togglePause() // eslint-disable-line
+      this.$store.getters['vue-hifi/getCurrentSound'].togglePause() // eslint-disable-line
     },
 
     toggleMute () {
       const isMuted = !(this.$store.getters['vue-hifi/getIsMuted']) // eslint-disable-line
       this.$store.commit('vue-hifi/setIsMuted', isMuted)
       const newVolume = isMuted ? 0 : this.volume
-      const sound = this.$store.getters['vue-hifi/getSound'] // eslint-disable-line
+      const sound = this.$store.getters['vue-hifi/getCurrentSound'] // eslint-disable-line
       if (sound) {
         sound._setVolume(newVolume)
       }

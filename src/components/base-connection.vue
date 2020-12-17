@@ -1,6 +1,8 @@
 <script>
 import Vue from 'vue'
 
+let uniqueConnectionId = 0;
+
 const BaseConnection = Vue.extend({
 
   props: {
@@ -78,6 +80,11 @@ const BaseConnection = Vue.extend({
       type: Array,
       default: undefined
     }
+  },
+
+  beforeCreate () {
+    this.uuid = uniqueConnectionId.toString()
+    uniqueConnectionId += 1
   },
 
   created () {
