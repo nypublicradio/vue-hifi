@@ -1,9 +1,17 @@
 <template>
   <div>
-    <button  @click="playTest">play</button>
-    <button  @click="pause">pause</button>
-    <button  @click="stop">stop</button>
-    <button  @click="togglePause">togglePause</button>
+    <button @click="playTest">
+      play
+    </button>
+    <button @click="pause">
+      pause
+    </button>
+    <button @click="stop">
+      stop
+    </button>
+    <button @click="togglePause">
+      togglePause
+    </button>
     <div>isLoading: {{ isLoading }}</div>
     <div>isPlaying: {{ isPlaying }}</div>
   </div>

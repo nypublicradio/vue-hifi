@@ -1,6 +1,6 @@
 import HowlerConnection from '../components/howler-connection'
 import HlsConnection from '../components/hls-connection'
-import state from '../store'
+import vueHifiStore from '../store'
 
 export const EVENT_MAP = [
   { event: 'audio-played', handler: '_relayPlayedEvent' },
@@ -16,27 +16,20 @@ export const EVENT_MAP = [
   { event: 'audio-metadata-changed', handler: '_relayMetadataChangedEvent' }
 ]
 
-export const SERVICE_EVENT_MAP = [
-  { event: 'current-sound-changed' },
-  { event: 'current-sound-interrupted' },
-  { event: 'new-load-request' },
-  { event: 'pre-load' }
-]
-
 const CONNECTIONS = [HowlerConnection, HlsConnection]
 
 export default {
-  created () {
-    this.$store.registerModule('vue-hifi', state)
+  beforeCreate () {
+    this.$store.registerModule('vue-hifi', vueHifiStore)
   },
 
   computed: {
     isLoading () {
-      return this.$store.getters.getIsLoading
+      return this.$store.getters['vue-hifi/getIsLoading'] // eslint-disable-line
     },
 
     isPlaying () {
-      return this.$store.getters.getIsPlaying
+      return this.$store.getters['vue-hifi/getIsPlaying'] // eslint-disable-line
     },
 
     isMobileDevice () {
@@ -45,20 +38,20 @@ export default {
 
     volume: {
       get: function () {
-        return this.$store.getters.getVolume
+        return this.$store.getters['vue-hifi/getVolume'] // eslint-disable-line
       },
       set: function (volume) {
-        const sound = this.$store.getters.getSound
+        const sound = this.$store.getters['vue-hifi/getCurrentSound'] // eslint-disable-line
         if (sound) {
           sound._setVolume(volume)
         }
-        this.$store.commit('setVolume', volume)
+        this.$store.commit('vue-hifi/setVolume', volume)
       }
     },
 
     isMuted: {
       get: function () {
-        return this.$store.getters.getIsMuted
+        return this.$store.getters['vue-hifi/getIsMuted'] // eslint-disable-line
       }
     }
   },
@@ -79,7 +72,8 @@ export default {
           if (Connection.canPlay(urls[urlIndex])) {
             return new Connection({
               propsData: {
-                urls: [urls[urlIndex]]
+                urls: [urls[urlIndex]],
+                volume: this.$store.getters['vue-hifi/getVolume']
               }
             })
           }
@@ -98,17 +92,16 @@ export default {
      */
 
     play (urls, options = {}) {
-      if (this.$store.getters.getIsPlaying) {
-        // trigger current-sound-iterrupted
-        this.pause()
+      if (this.$store.getters['vue-hifi/getIsPlaying']) { // eslint-disable-line
+        this.stop()
       }
 
-      this.$store.commit('setIsLoading', true)
+      this.$store.commit('vue-hifi/setIsLoading', true)
       const sound = this._load(urls, options)
 
       if (sound) {
         this._registerEvents(sound)
-        this.$store.commit('setSound', sound)
+        this.$store.commit('vue-hifi/setCurrentSound', sound)
         this._attemptToPlaySound(sound, options)
       }
     },
@@ -135,25 +128,31 @@ export default {
     },
 
     pause () {
-      // make sure sound is playing/exists
-      this.$store.getters.getSound.pause()
+      const sound = this.$store.getters['vue-hifi/getCurrentSound']  // eslint-disable-line
+      if (sound) {
+        sound.pause()
+      }
     },
 
     stop () {
-      // make sure sound is playing/exists
-      this.$store.getters.getSound.stop()
+      const sound = this.$store.getters['vue-hifi/getCurrentSound']  // eslint-disable-line
+      if (sound) {
+        sound.stop()
+      }
     },
 
     togglePause () {
-      // make sure sound is playing/exists
-      this.$store.getters.getSound.togglePause()
+      const sound = this.$store.getters['vue-hifi/getCurrentSound']  // eslint-disable-line
+      if (sound) {
+        sound.togglePause()
+      }
     },
 
     toggleMute () {
-      const isMuted = !(this.$store.getters.getIsMuted)
-      this.$store.commit('setIsMuted', isMuted)
+      const isMuted = !(this.$store.getters['vue-hifi/getIsMuted']) // eslint-disable-line
+      this.$store.commit('vue-hifi/setIsMuted', isMuted)
       const newVolume = isMuted ? 0 : this.volume
-      const sound = this.$store.getters.getSound
+      const sound = this.$store.getters['vue-hifi/getCurrentSound'] // eslint-disable-line
       if (sound) {
         sound._setVolume(newVolume)
       }
@@ -218,16 +217,16 @@ export default {
     */
 
     _relayPlayedEvent (sound) {
-      this.$store.commit('setIsLoading', false)
-      this.$store.commit('setIsPlaying', true)
+      this.$store.commit('vue-hifi/setIsLoading', false)
+      this.$store.commit('vue-hifi/setIsPlaying', true)
       this._relayEvent('audio-played', sound)
     },
     _relayPausedEvent (sound) {
-      this.$store.commit('setIsPlaying', false)
+      this.$store.commit('vue-hifi/setIsPlaying', false)
       this._relayEvent('audio-paused', sound)
     },
     _relayEndedEvent (sound) {
-      this.$store.commit('setIsPlaying', false)
+      this.$store.commit('vue-hifi/setIsPlaying', false)
       this._relayEvent('audio-ended', sound)
     },
     _relayDurationChangedEvent (sound) {
@@ -237,7 +236,7 @@ export default {
       this._relayEvent('audio-position-changed', sound)
     },
     _relayLoadedEvent (sound) {
-      this.$store.commit('setIsLoading', false)
+      this.$store.commit('vue-hifi/setIsLoading', false)
       this._relayEvent('audio-loaded', sound)
     },
     _relayLoadingEvent (sound) {

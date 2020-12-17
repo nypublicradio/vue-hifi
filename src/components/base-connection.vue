@@ -1,28 +1,11 @@
 <script>
 import Vue from 'vue'
 
-let BaseConnection = Vue.extend({
+let uniqueConnectionId = 0
 
-  created () {
-    this.init()
-  },
+const BaseConnection = Vue.extend({
 
   props: {
-    debugName: { // computed
-      type: String,
-      default: 'base-connection'
-    },
-
-    pollInterval: {
-      type: Number,
-      default: 1000
-    },
-
-    timeout: {
-      type: Number,
-      default: 30000
-    },
-
     hasPlayed: {
       type: Boolean,
       default: false
@@ -38,7 +21,7 @@ let BaseConnection = Vue.extend({
       default: false
     },
 
-    isErrored: { // computed
+    isErrored: {
       type: Boolean,
       default: false
     },
@@ -48,40 +31,54 @@ let BaseConnection = Vue.extend({
       default: null
     },
 
-    isStream: { // computed
-      type: Boolean,
-      default: false
-    },
-
-    isFastForwardable: {
-      type: Boolean,
-      default: false
-    },
-
-    isRewindable: {
-      type: Boolean,
-      default: false
-    },
-
-    duration: {
-      type: Number,
-      default: 0
-    },
-
-    percentLoaded: {
-      type: Number,
-      default: 0
-    },
-
-    position: { // computed
-      type: Number,
-      default: 0
-    },
-
     urls: {
       type: Array,
       default: undefined
+    },
+
+    volume: {
+      type: Number,
+      default: 100
     }
+  },
+
+  computed: {
+    isStream () {
+      return true // only streams supported so far
+    },
+
+    isFastForwardable () {
+      return false
+    },
+
+    isRewindable () {
+      return false
+    },
+
+    duration () {
+      return 0
+    },
+
+    percentLoaded () {
+      return 0
+    },
+
+    position () {
+      return 0
+    }
+  },
+
+  beforeCreate () {
+    this.uuid = uniqueConnectionId.toString()
+    uniqueConnectionId += 1
+  },
+
+  created () {
+    this.init()
+  },
+
+  beforeDestroy () {
+    this.teardown()
   },
 
   methods: {
@@ -89,51 +86,49 @@ let BaseConnection = Vue.extend({
     // Initializer
 
     init () {
-      this.$set(this, 'isLoading', true);
+      this.$set(this, 'isLoading', true)
 
       this.$on('audio-played', () => {
-        this.$set(this, 'hasPlayed', true);
-        this.$set(this, 'isLoading', false);
-        this.$set(this, 'isPlaying', true);
-        this.$set(this, 'error', null);
-      });
+        this.$set(this, 'hasPlayed', true)
+        this.$set(this, 'isLoading', false)
+        this.$set(this, 'isPlaying', true)
+        this.$set(this, 'error', null)
+      })
 
       this.$on('audio-paused', () => {
-        this.$set(this, 'isPlaying', false);
-      });
+        this.$set(this, 'isPlaying', false)
+      })
 
       this.$on('audio-ended', () => {
-        this.$set(this, 'isPlaying', false);
-      });
+        this.$set(this, 'isPlaying', false)
+      })
 
       this.$on('audio-ready', () => {
-        this.$set(this, 'duration', this._audioDuration());
-      });
+        // this.$set(this, 'duration', this._audioDuration())
+      })
 
       this.$on('audio-load-error', (e) => {
         if (this.hasPlayed) {
-          this.$set(this, 'isLoading', false);
-          this.$set(this, 'isPlaying', false);
+          this.$set(this, 'isLoading', false)
+          this.$set(this, 'isPlaying', false)
         }
-        this.$set(this, 'error', e);
-      });
+        this.$set(this, 'error', e)
+      })
 
       this.$on('audio-loaded', () => {
-        this.$set(this, 'isLoading', false);
-      });
+        this.$set(this, 'isLoading', false)
+      })
 
       this.$on('audio-loading', (info) => {
         if (info && info.percentLoaded) {
-          this.$set(this, 'percentLoaded', info.percentLoaded);
+          this.$set(this, 'percentLoaded', info.percentLoaded)
         }
-      });
-
-      this._detectTimeouts();
+      })
 
       try {
-        this._setup();
-      } catch(e) {
-        this.$emit('audio-load-error', `Error in _setup ${e.message}`);
+        this._setup()
+      } catch (e) {
+        this.$emit('audio-load-error', `Error in _setup ${e.message}`)
       }
     },
 
@@ -143,21 +138,11 @@ let BaseConnection = Vue.extend({
       // what is vue equivalent to Ember.willDestroy()?
     },
 
-    // Internal Methods
-
-    _detectTimeouts () {
-
-    },
-
     // Public Interface
 
-    fastForward () {
+    fastForward () {},
 
-    },
-
-    rewind () {
-
-    },
+    rewind () {},
 
     togglePause () {
       if (this.isPlaying) {
@@ -208,7 +193,7 @@ let BaseConnection = Vue.extend({
   }
 })
 
-BaseConnection.canPlayMimeType = function(mimeType) {
+BaseConnection.canPlayMimeType = function (mimeType) {
   const mimeTypeWhiteList = this.acceptMimeTypes
   const mimeTypeBlackList = this.rejectMimeTypes
 

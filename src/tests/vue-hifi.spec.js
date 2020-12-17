@@ -45,7 +45,7 @@ describe('Vue Hifi', () => {
         })
         const wrapper = mount(testComponentType, { store })
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
-        expect(wrapper.vm.$store.getters.getSound).toBeInstanceOf(BaseConnection)
+        expect(wrapper.vm.$store.getters['vue-hifi/getCurrentSound']).toBeInstanceOf(BaseConnection)
     })
 
     test('it pauses', () => {
@@ -57,7 +57,7 @@ describe('Vue Hifi', () => {
         const wrapper = mount(testComponentType, { store })
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
         wrapper.vm.pause()
-        expect(wrapper.vm.$store.getters.getSound).toBeInstanceOf(BaseConnection)
+        expect(wrapper.vm.$store.getters['vue-hifi/getCurrentSound']).toBeInstanceOf(BaseConnection)
     })
 
     test('it stops', () => {
@@ -69,7 +69,7 @@ describe('Vue Hifi', () => {
         const wrapper = mount(testComponentType, { store })
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
         wrapper.vm.stop()
-        expect(wrapper.vm.$store.getters.getSound).toBeInstanceOf(BaseConnection)
+        expect(wrapper.vm.$store.getters['vue-hifi/getCurrentSound']).toBeInstanceOf(BaseConnection)
     })
 
     test('it toggle pauses', () => {
@@ -81,7 +81,7 @@ describe('Vue Hifi', () => {
         const wrapper = mount(testComponentType, { store })
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
         wrapper.vm.togglePause()
-        expect(wrapper.vm.$store.getters.getSound).toBeInstanceOf(BaseConnection)
+        expect(wrapper.vm.$store.getters['vue-hifi/getCurrentSound']).toBeInstanceOf(BaseConnection)
     })
 
     test('it pauses previously playing audio', () => {
@@ -91,10 +91,10 @@ describe('Vue Hifi', () => {
             render () {}
         })
         const wrapper = mount(testComponentType, { store })
-        const spy = jest.spyOn(wrapper.vm, 'pause')
+        const spy = jest.spyOn(wrapper.vm, 'stop') // pause really means a 'hard stop'
 
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
-        wrapper.vm.$store.commit('setIsPlaying', true)
+        wrapper.vm.$store.commit('vue-hifi/setIsPlaying', true)
         wrapper.vm.play()
         expect(spy).toHaveBeenCalledTimes(1)
     })

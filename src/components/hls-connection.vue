@@ -5,11 +5,12 @@ import { getMimeType } from '../utils/mime-types'
 
 /**
  * This class connects with HLS.js to create sounds.
- * 
+ *
  * @class HlsConnection
  * @extends BaseConnection
  */
-let HlsConnection = BaseConnection.extend({
+
+const HlsConnection = BaseConnection.extend({
 
   data () {
     return {
@@ -24,7 +25,7 @@ let HlsConnection = BaseConnection.extend({
   methods: {
 
     _setup () {
-      this.hls = new HLS({debug: false, startFragPrefetch: true})
+      this.hls = new HLS({ debug: false, startFragPrefetch: true })
       this.video = document.createElement('video')
 
       this.hls.attachMedia(this.video)
@@ -34,35 +35,35 @@ let HlsConnection = BaseConnection.extend({
 
     _setupHlsEvents (hls) {
       hls.on(HLS.Events.MEDIA_ATTACHED, () => {
-        console.log('media attached');
+        console.log('media attached')
         hls.loadSource(this.urls[0])
 
         hls.on(HLS.Events.MANIFEST_PARSED, (e, data) => {
-          console.log(`manifest parsed and loaded, found ${data.levels.length} quality level(s)`);
-          this.manifest =data
+          console.log(`manifest parsed and loaded, found ${data.levels.length} quality level(s)`)
+          this.manifest = data
         })
 
         hls.on(HLS.Events.LEVEL_LOADED, (e, data) => {
-          console.log(`level ${data.level} loaded`);
+          console.log(`level ${data.level} loaded`)
           this.live = data.details.live
           this._checkIfAudioIsReady()
         })
 
         hls.on(HLS.Events.AUDIO_TRACK_LOADED, () => {
-          console.log('audio track loaded');
+          console.log('audio track loaded')
           this._checkIfAudioIsReady()
         })
 
         hls.on(HLS.Events.ERROR, (e, data) => this._onHLSError(e, data))
 
-        var self = this
+        const self = this
         hls.on(HLS.Events.FRAG_CHANGED, (e, f) => {
-          let newId3TagMetadata = {
+          const newId3TagMetadata = {
             title: f.frag.title
           }
 
           if (JSON.stringify(self.id3TagMetadata) !== JSON.stringify(newId3TagMetadata)) {
-            console.log('hls metadata changed');
+            console.log('hls metadata changed')
             this.$emit('audio-metadata-changed', {
               old: self.id3TagMetadata,
               new: newId3TagMetadata
@@ -81,59 +82,59 @@ let HlsConnection = BaseConnection.extend({
         this.$emit('audio-played', this)
       })
 
-      video.addEventListener('pause',           ()  => this.$emit('audio-paused', this))
-      video.addEventListener('durationchange',  ()  => this.$emit('audio-duration-changed', this))
-      video.addEventListener('seeked',          ()  => this.$emit('audio-position-changed', this))
-      video.addEventListener('progress',        ()  => this.$emit('audio-loading'))
-      video.addEventListener('error',           (e) => this._onVideoError(e))
+      video.addEventListener('pause', () => this.$emit('audio-paused', this))
+      video.addEventListener('durationchange', () => this.$emit('audio-duration-changed', this))
+      video.addEventListener('seeked', () => this.$emit('audio-position-changed', this))
+      video.addEventListener('progress', () => this.$emit('audio-loading'))
+      video.addEventListener('error', (e) => this._onVideoError(e))
     },
 
-    _checkIfAudioIsReady() {
+    _checkIfAudioIsReady () {
       if (!this.loaded) {
         // The only reliable way to check if this thing is actually ready
         // is to play it. If we get a play signal we're golden, but if we
         // get an error, we're outta here
 
-        console.log('Testing if audio is ready');
-        this.video.volume = 1
+        console.log('Testing if audio is ready')
+        this.video.volume = this.volume ? this.volume / 100 : 1
         this.video.play()
       }
     },
 
-    _signalAudioIsReady() {
-      console.log('Test succeeded, signaling audio-ready');
+    _signalAudioIsReady () {
+      console.log('Test succeeded, signaling audio-ready')
       this.loaded = true
-      //this.video.pause()
+      // this.video.pause()
       this.$emit('audio-ready')
     },
 
-    _onVideoError(e) {
+    _onVideoError (e) {
       switch (e.target.error.code) {
         case e.target.error.MEDIA_ERR_ABORTED:
-          console.log("video element error: playback aborted");
-          this._giveUpAndDie("unknown error")
+          console.log('video element error: playback aborted')
+          this._giveUpAndDie('unknown error')
           break
         case e.target.error.MEDIA_ERR_NETWORK:
-          console.log("video element error: network error");
-          this._giveUpAndDie("Network error caused download to fail")
+          console.log('video element error: network error')
+          this._giveUpAndDie('Network error caused download to fail')
           break
         case e.target.error.MEDIA_ERR_DECODE:
-          console.log("video element error: decoding error");
+          console.log('video element error: decoding error')
           this._tryToRecoverFromMediaError(e.target.error.MEDIA_ERR_DECODE)
           break
         case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-          console.log("video element error: source format not supported");
-          this._giveUpAndDie("audio source format is not supported")
+          console.log('video element error: source format not supported')
+          this._giveUpAndDie('audio source format is not supported')
           break
         default:
-          this._giveUpAndDie("unknown error")
+          this._giveUpAndDie('unknown error')
           break
       }
     },
 
-    _onHLSError (error, data) {
+    _onHLSError (error, data) { // eslint-disable-line
       if (data.fatal) {
-        switch(data.type) {
+        switch (data.type) {
           case HLS.ErrorTypes.NETWORK_ERROR:
             console.log(data)
             this._giveUpAndDie(`${data.details}`)
@@ -149,21 +150,21 @@ let HlsConnection = BaseConnection.extend({
     },
 
     _tryToRecoverFromMediaError (error) {
-      let mediaRecoveryAttempts = this.mediaRecoveryAttempts
-      let hls = this.hls
+      const mediaRecoveryAttempts = this.mediaRecoveryAttempts
+      const hls = this.hls
 
-      switch(mediaRecoveryAttempts) {
+      switch (mediaRecoveryAttempts) {
         case 0:
-          console.log(`First attempt at media error recovery for error: ${error}`);
+          console.log(`First attempt at media error recovery for error: ${error}`)
           hls.recoverMediaError()
           break
         case 1:
-          console.log(`Second attempt at media error recovery: switching codecs for error: ${error}`);
+          console.log(`Second attempt at media error recovery: switching codecs for error: ${error}`)
           hls.swapAudioCodec()
           hls.recoverMediaError()
           break
         case 2:
-          console.log(`We tried our best and we failed: ${error}`);
+          console.log(`We tried our best and we failed: ${error}`)
           this._giveUpAndDie(error)
           break
       }
@@ -176,7 +177,7 @@ let HlsConnection = BaseConnection.extend({
       this.$emit('audio-load-error', error)
     },
 
-    play (/* { position } = {} */ ) {
+    play (/* { position } = {} */) {
       if (!this.video.src) {
         this._setup() // the stream was stopped before
       }
@@ -196,7 +197,7 @@ let HlsConnection = BaseConnection.extend({
     },
 
     stop () {
-      this.pause();
+      this.pause()
       this.video.removeAttribute('src')
     },
 
@@ -218,7 +219,7 @@ let HlsConnection = BaseConnection.extend({
     },
 
     _setVolume (volume) {
-      this.video.volume = (volume/100)
+      this.video.volume = (volume / 100)
     },
 
     teardown () {
@@ -227,9 +228,9 @@ let HlsConnection = BaseConnection.extend({
   }
 })
 
-HlsConnection.acceptMimeTypes = [ 'application/vnd.apple.mpegurl' ]
+HlsConnection.acceptMimeTypes = ['application/vnd.apple.mpegurl']
 
-HlsConnection.canUseConnection = function ( /* audioUrl */) {
+HlsConnection.canUseConnection = function (/* audioUrl */) {
   return HLS.isSupported()
 }
 
@@ -242,11 +243,11 @@ HlsConnection.canPlay = function (url) {
   }
 
   if (typeof url === 'string') {
-    let mimeType = getMimeType(url)
+    const mimeType = getMimeType(url)
 
     if (!mimeType) {
       console.warn(`Could not determine mime type for ${url}`)
-      console.warn(`Attempting to play urls with an unknown mime type can be bad for performance.`)
+      console.warn('Attempting to play urls with an unknown mime type can be bad for performance.')
       return true
     } else {
       return BaseConnection.canPlayMimeType(mimeType)
