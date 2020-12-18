@@ -17,10 +17,14 @@ export const EVENT_MAP = [
 ]
 
 const CONNECTIONS = [HowlerConnection, HlsConnection]
+let vuiHifiStoreRegistered = false
 
 export default {
   beforeCreate () {
-    this.$store.registerModule('vue-hifi', vueHifiStore)
+    if (!vuiHifiStoreRegistered) {
+      this.$store.registerModule('vue-hifi', vueHifiStore)
+      vuiHifiStoreRegistered = true
+    }
   },
 
   computed: {
