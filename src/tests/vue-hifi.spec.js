@@ -6,6 +6,7 @@ import { describe, test, expect } from '@jest/globals'
 import vueHifi from '../mixins/vue-hifi'
 import BaseConnection from '../components/base-connection'
 import HowlerConnection from '../components/howler-connection'
+import HlsConnection from '../components/hls-connection'
 
 Vue.use(Vuex)
 // const localVue = createLocalVue()
@@ -17,10 +18,36 @@ describe('Vue Hifi', () => {
     let state
 
     beforeEach(() => {
-        state = { data: {} }
+        state = () => ({
+            isLoading: false,
+            isPlaying: false,
+            currentSound: null,
+            volume: 100,
+            isMuted: false
+        }),
         actions = {}
+        const sound = mount(HlsConnection, {})
         store = new Vuex.Store({
-
+            modules: {
+                'vue-hifi': {
+                    namespaced: true,
+                    state,
+                    getters: {
+                        getCurrentSound () {
+                            return sound.vm
+                        },
+                        getIsPlaying (state) {
+                            // return true
+                            return state.isPlaying
+                        }
+                    },
+                    mutations: {
+                        setIsPlaying (state, isPlaying) {
+                            state.isPlaying = isPlaying
+                        }
+                    }
+                }
+            }
         })
     })
 
@@ -43,9 +70,11 @@ describe('Vue Hifi', () => {
             mixins: [vueHifi],
             render () {}
         })
-        const wrapper = mount(testComponentType, { store })
+        const sound = mount(HlsConnection, {})
+        const wrapper = mount(testComponentType, { store, localVue })
+        const spy = jest.spyOn(wrapper.vm, '_attemptToPlaySound')
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
-        expect(wrapper.vm.$store.getters['vue-hifi/getCurrentSound']).toBeInstanceOf(BaseConnection)
+        expect(spy).toHaveBeenCalledTimes(1)
     })
 
     test('it pauses', () => {
@@ -55,9 +84,14 @@ describe('Vue Hifi', () => {
             render () {}
         })
         const wrapper = mount(testComponentType, { store })
+        const sound = store.getters['vue-hifi/getCurrentSound']
+        expect(sound).toBeDefined()
+        const spy = jest.spyOn(sound, 'pause')
+
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
         wrapper.vm.pause()
-        expect(wrapper.vm.$store.getters['vue-hifi/getCurrentSound']).toBeInstanceOf(BaseConnection)
+
+        expect(spy).toHaveBeenCalledTimes(1)
     })
 
     test('it stops', () => {
@@ -67,9 +101,14 @@ describe('Vue Hifi', () => {
             render () {}
         })
         const wrapper = mount(testComponentType, { store })
+        const sound = store.getters['vue-hifi/getCurrentSound']
+        expect(sound).toBeDefined()
+        const spy = jest.spyOn(sound, 'stop')
+
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
         wrapper.vm.stop()
-        expect(wrapper.vm.$store.getters['vue-hifi/getCurrentSound']).toBeInstanceOf(BaseConnection)
+
+        expect(spy).toHaveBeenCalledTimes(1)
     })
 
     test('it toggle pauses', () => {
@@ -79,9 +118,14 @@ describe('Vue Hifi', () => {
             render () {}
         })
         const wrapper = mount(testComponentType, { store })
+        const sound = store.getters['vue-hifi/getCurrentSound']
+        expect(sound).toBeDefined()
+        const spy = jest.spyOn(sound, 'togglePause')
+
         wrapper.vm.play(['https://hls-live.wnyc.org/wnycfm32/playlist.m3u8'])
         wrapper.vm.togglePause()
-        expect(wrapper.vm.$store.getters['vue-hifi/getCurrentSound']).toBeInstanceOf(BaseConnection)
+
+        expect(spy).toHaveBeenCalledTimes(1)
     })
 
     test('it pauses previously playing audio', () => {
