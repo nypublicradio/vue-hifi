@@ -17,10 +17,14 @@ export const EVENT_MAP = [
 ]
 
 const CONNECTIONS = [HowlerConnection, HlsConnection]
+let vuiHifiStoreRegistered = false
 
 export default {
   beforeCreate () {
-    this.$store.registerModule('vue-hifi', vueHifiStore)
+    if (!vuiHifiStoreRegistered) {
+      this.$store.registerModule('vue-hifi', vueHifiStore)
+      vuiHifiStoreRegistered = true
+    }
   },
 
   computed: {
@@ -73,7 +77,7 @@ export default {
             return new Connection({
               propsData: {
                 urls: [urls[urlIndex]],
-                volume: this.$store.getters['vue-hifi/getVolume']
+                volume: this.$store.getters['vue-hifi/getIsMuted'] ? 0 : this.$store.getters['vue-hifi/getVolume']
               }
             })
           }
