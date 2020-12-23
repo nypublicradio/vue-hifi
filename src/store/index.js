@@ -52,6 +52,5 @@ export default {
     setIsMuted (state, isMuted) {
       state.isMuted = isMuted
     }
-  },
-  namespaced: true
+  }
 }
