@@ -1,3 +1,6 @@
+## 0.0.6 (December 23, 2020)
+- removed namespace from vuex store
+
 ## 0.0.5 (December 21, 2020)
 - Bump version number to comply with npm registry for `vue-hifi`
 
